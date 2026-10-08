@@ -2,7 +2,7 @@ import AuthShell from "@/components/AuthShell";
 import { ActionForm, SubmitButton } from "@/components/dashboard/forms";
 import { signIn } from "@/lib/actions/auth";
 
-export const metadata = { title: "Connexion | CryptoBO" };
+export const metadata = { title: "Connexion | CoinPulse" };
 
 export default function LoginPage() {
   return (

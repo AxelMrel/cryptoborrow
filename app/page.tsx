@@ -7,7 +7,7 @@ import { ChartIcon, IconBadge, KeyIcon, ShieldIcon, WalletIcon } from "@/compone
 import { LiveTicker, MarketsGrid } from "@/components/charts/LiveTicker";
 
 export const metadata = {
-  title: "CryptoBO | Votre portefeuille crypto en FCFA",
+  title: "CoinPulse | Votre portefeuille crypto en FCFA",
   description: "Votre portefeuille en FCFA, les marchés en direct et des retraits sécurisés par code.",
 };
 

@@ -1,4 +1,4 @@
-# CryptoBO — Simulateur d'échange / portefeuille crypto (FCFA)
+# CoinPulse — Simulateur d'échange / portefeuille crypto (FCFA)
 
 > **Projet pédagogique : tout est simulé.** Aucun vrai paiement, aucun vrai retrait.
 

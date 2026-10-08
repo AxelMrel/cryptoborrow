@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import Logo from "@/components/Logo";
 import type { ReactNode } from "react";
 
 /** Mise en page des pages connexion / inscription : formulaire à gauche, photo humaine à droite. */
@@ -15,10 +16,7 @@ export default function AuthShell({ title, subtitle, photo, quote, homeHref = "/
     <main className="grid min-h-screen lg:grid-cols-2">
       <section className="flex flex-col justify-center px-6 py-10 sm:px-12">
         <div className="mx-auto w-full max-w-md">
-          <Link href={homeHref} className="flex items-center gap-2 text-lg font-bold">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand text-lg text-white">₿</span>
-            <span>Crypto<span className="text-brand">BO</span></span>
-          </Link>
+          <Link href={homeHref} aria-label="Accueil"><Logo className="h-16" /></Link>
           <h1 className="mt-10 text-3xl font-semibold">{title}</h1>
           <p className="mb-7 mt-2 text-sm text-slate-500">{subtitle}</p>
           {children}

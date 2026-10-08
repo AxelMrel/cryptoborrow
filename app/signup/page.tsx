@@ -4,7 +4,7 @@ import AuthShell from "@/components/AuthShell";
 import SignupForm from "@/components/SignupForm";
 import { PLANS } from "@/lib/plans";
 
-export const metadata = { title: "Devenir admin | CryptoBO" };
+export const metadata = { title: "Devenir admin | CoinPulse" };
 
 async function SignupContent({ searchParams }: { searchParams: PageProps<"/signup">["searchParams"] }) {
   const { plan } = await searchParams;

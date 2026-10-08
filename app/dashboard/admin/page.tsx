@@ -13,7 +13,7 @@ import { dailyFlows, typeBreakdown } from "@/lib/stats";
 // Pages authentifiées : le contenu dépend de la session, la navigation n'a pas besoin d'être "instantanée".
 export const instant = false;
 
-export const metadata = { title: "Espace admin | CryptoBO" };
+export const metadata = { title: "Espace admin | CoinPulse" };
 
 export default async function AdminDashboard() {
   const me = await requireRole("admin");

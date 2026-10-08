@@ -52,7 +52,7 @@ function CredentialsCard({ credentials }: { credentials: Credentials }) {
   const first = credentials.name.split(/\s+/)[0];
   const link = typeof window !== "undefined" ? `${window.location.origin}/login` : "/login";
   const text =
-    `Bonjour ${first}, votre compte CryptoBO est prêt.
+    `Bonjour ${first}, votre compte CoinPulse est prêt.
 
 ` +
     `E-mail : ${credentials.email}
@@ -82,7 +82,7 @@ Connexion : ${link}
         <a className="btn btn-primary" target="_blank" rel="noopener noreferrer" href={`https://wa.me/?text=${encodeURIComponent(text)}`}>
           <SendIcon className="h-4 w-4" />WhatsApp
         </a>
-        <a className="btn btn-ghost" href={`mailto:${credentials.email}?subject=${encodeURIComponent("Vos accès CryptoBO")}&body=${encodeURIComponent(text)}`}>
+        <a className="btn btn-ghost" href={`mailto:${credentials.email}?subject=${encodeURIComponent("Vos accès CoinPulse")}&body=${encodeURIComponent(text)}`}>
           <SendIcon className="h-4 w-4" />E-mail
         </a>
       </div>

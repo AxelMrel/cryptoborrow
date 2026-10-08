@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import Logo from "@/components/Logo";
 import { getCurrentProfile } from "@/lib/dal";
 import { signOut } from "@/lib/actions/auth";
 
@@ -28,10 +29,7 @@ export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)
     <div className="min-h-screen bg-surface">
       <header className="sticky top-0 z-40 px-3 pt-3 sm:px-4 sm:pt-4">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between rounded-2xl border border-slate-200/60 bg-white px-5 shadow-[0_10px_36px_rgba(18,22,58,0.08)]">
-          <Link href="/dashboard" className="flex items-center gap-2 text-lg font-bold">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-white">₿</span>
-            <span>Crypto<span className="text-brand">BO</span></span>
-          </Link>
+          <Link href="/dashboard" aria-label="Tableau de bord"><Logo className="h-12" /></Link>
           <Suspense fallback={<div className="h-9 w-28 animate-pulse rounded-lg bg-slate-100" />}>
             <UserBar />
           </Suspense>

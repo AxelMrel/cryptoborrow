@@ -6,7 +6,7 @@ import PricingCards from "@/components/PricingCards";
 import { ChartIcon, CoinsIcon, IconBadge, KeyIcon, SendIcon, UsersIcon } from "@/components/Icons";
 
 export const metadata = {
-  title: "Espace admin | CryptoBO",
+  title: "Espace admin | CoinPulse",
   description: "Créez vos clients, créditez leurs comptes, envoyez-leur leurs accès et générez leurs codes de retrait.",
 };
 
@@ -61,7 +61,7 @@ export default function AdminLanding() {
             <div className="animate-float absolute -bottom-8 -left-2 w-72 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_18px_44px_rgba(18,22,58,0.14)] sm:-left-8">
               <p className="text-xs font-semibold text-brand">Message d&apos;accès (exemple)</p>
               <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                Bonjour Moussa, votre compte CryptoBO est prêt.<br />
+                Bonjour Moussa, votre compte CoinPulse est prêt.<br />
                 E-mail : moussa@exemple.com<br />
                 Mot de passe : ••••••••<br />
                 Connexion : lien de la plateforme

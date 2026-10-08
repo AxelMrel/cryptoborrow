@@ -13,7 +13,7 @@ import { Donut, TrendArea } from "@/components/charts/StatCharts";
 // Pages authentifiées : le contenu dépend de la session, la navigation n'a pas besoin d'être "instantanée".
 export const instant = false;
 
-export const metadata = { title: "Mon portefeuille | CryptoBO" };
+export const metadata = { title: "Mon portefeuille | CoinPulse" };
 
 export default async function ClientDashboard() {
   const me = await requireRole("client");

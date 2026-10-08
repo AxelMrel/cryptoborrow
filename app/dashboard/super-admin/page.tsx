@@ -13,7 +13,7 @@ import { dailyFlows, typeBreakdown } from "@/lib/stats";
 // Pages authentifiées : le contenu dépend de la session, la navigation n'a pas besoin d'être "instantanée".
 export const instant = false;
 
-export const metadata = { title: "Super admin | CryptoBO" };
+export const metadata = { title: "Super admin | CoinPulse" };
 
 export default async function SuperAdminDashboard() {
   const me = await requireRole("super_admin");
