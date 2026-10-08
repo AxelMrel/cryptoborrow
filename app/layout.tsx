@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "CryptoBO | Simulateur d'échange crypto",
   description: "Plateforme de simulation d'échange et de portefeuille crypto en FCFA. Aucun vrai paiement.",
+  icons: { icon: "/fav.png" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
