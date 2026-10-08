@@ -1,0 +1,30 @@
+import Image from "next/image";
+import type { ReactNode } from "react";
+
+/** Bandeau d'accueil humain en haut de chaque dashboard. */
+export default function Welcome({ name, subtitle, photo = "/images/mobile-pay.jpg", children }: {
+  name: string;
+  subtitle: string;
+  photo?: string;
+  children?: ReactNode;
+}) {
+  const first = name.split(/\s+/)[0];
+  return (
+    <section className="relative overflow-hidden rounded-3xl bg-brand text-white shadow-[0_20px_50px_rgba(53,99,233,0.25)]">
+      <div className="pointer-events-none absolute -right-10 -top-16 h-64 w-64 rounded-full bg-white/10" />
+      <div className="pointer-events-none absolute bottom-[-5rem] left-1/3 h-56 w-56 rounded-full bg-white/5" />
+      <div className="relative grid items-center gap-6 p-6 sm:p-8 md:grid-cols-[1fr_auto]">
+        <div>
+          <p className="text-sm font-medium text-white/70">Bonjour</p>
+          <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">{first}, ravi de vous revoir</h1>
+          <p className="mt-2 max-w-lg text-sm text-white/80">{subtitle}</p>
+          {children && <div className="mt-5">{children}</div>}
+        </div>
+        <Image
+          src={photo} alt="" width={220} height={150} priority
+          className="hidden h-36 w-56 rounded-2xl object-cover shadow-lg ring-4 ring-white/20 md:block"
+        />
+      </div>
+    </section>
+  );
+}
