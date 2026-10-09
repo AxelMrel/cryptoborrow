@@ -12,7 +12,7 @@ export function DepositForm() {
         <label className="label" htmlFor="dep-amount">Montant (FCFA)</label>
         <input id="dep-amount" name="amount" inputMode="numeric" required className="input" placeholder="ex. 50000" />
       </div>
-      <SubmitButton className="btn btn-primary w-full">Déposer (simulé)</SubmitButton>
+      <SubmitButton className="btn btn-primary w-full">Déposer</SubmitButton>
     </ActionForm>
   );
 }

@@ -103,7 +103,7 @@ export default function AdminLanding() {
       <section id="tarifs" className="scroll-mt-24 bg-surface px-4 py-20">
         <h2 className="text-center text-3xl font-semibold sm:text-4xl">Choisissez <span className="text-brand">votre pack</span></h2>
         <p className="mx-auto mb-14 mt-3 max-w-xl text-center text-slate-500">
-          Activation immédiate. Le paiement est simulé : aucun montant n&apos;est réellement débité.
+          Activation immédiate. Aucun montant n&apos;est réellement débité.
         </p>
         <PricingCards />
       </section>

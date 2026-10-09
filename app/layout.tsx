@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CoinPulse | Simulateur d'échange crypto",
-  description: "Plateforme de simulation d'échange et de portefeuille crypto en FCFA. Aucun vrai paiement.",
+  title: "CoinPulse | Plateforme d'échange crypto",
+  description: "Plateforme d'échange et de portefeuille crypto en FCFA. Aucun vrai paiement.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

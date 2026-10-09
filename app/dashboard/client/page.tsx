@@ -37,8 +37,8 @@ export default async function ClientDashboard() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6">
-          <div id="depot" className="scroll-mt-24"><Card title="Dépôt (simulé)"><DepositForm /></Card></div>
-          <div id="retrait" className="scroll-mt-24"><Card title="Retrait (simulé)"><WithdrawFlow /></Card></div>
+          <div id="depot" className="scroll-mt-24"><Card title="Dépôt"><DepositForm /></Card></div>
+          <div id="retrait" className="scroll-mt-24"><Card title="Retrait"><WithdrawFlow /></Card></div>
         </div>
         <div className="lg:col-span-2"><MarketPanel /></div>
       </div>

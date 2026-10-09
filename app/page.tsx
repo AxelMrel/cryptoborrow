@@ -18,7 +18,7 @@ const ACCESS = [
 ];
 
 const FEATURES = [
-  { icon: <WalletIcon />, title: "Un portefeuille en FCFA", text: "Votre solde, vos dépôts et vos retraits simulés, avec une courbe d'évolution et un historique clair." },
+  { icon: <WalletIcon />, title: "Un portefeuille en FCFA", text: "Votre solde, vos dépôts et vos retraits, avec une courbe d'évolution et un historique clair." },
   { icon: <ChartIcon />, title: "Marchés en temps réel", text: "Cours des cryptos et taux de change dans votre espace, avec des graphes détaillés." },
   { icon: <KeyIcon />, title: "Retraits par code", text: "Pour retirer, demandez un code à votre admin. Il est à usage unique et limité dans le temps." },
   { icon: <ShieldIcon />, title: "Vos données, rien que les vôtres", text: "Vous ne voyez que votre compte. La séparation est garantie par la base de données." },

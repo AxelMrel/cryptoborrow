@@ -1,6 +1,6 @@
-# CoinPulse — Simulateur d'échange / portefeuille crypto (FCFA)
+# CoinPulse : plateforme d'échange / portefeuille crypto (FCFA)
 
-> **Projet pédagogique : tout est simulé.** Aucun vrai paiement, aucun vrai retrait.
+> **Projet pédagogique.** Aucun vrai paiement, aucun vrai retrait.
 
 Stack : **Next.js 16 (App Router) + TypeScript + Tailwind v4 + Supabase (Auth + PostgreSQL + RLS)**, déployé sur **Vercel**.
 Aucune API séparée : toute la logique serveur est dans des **Server Actions** et des **fonctions SQL (RPC)**.
@@ -20,7 +20,7 @@ cp .env.example .env.local        # puis renseigner les 3 clés Supabase
 4. Créer le super admin de départ : `npm run seed:super-admin`
 5. `npm run dev` → <http://localhost:3000> → *Connexion*.
 
-Parcours de démonstration : un futur admin choisit un pack sur la landing (`/signup`, paiement simulé) et reçoit ses crédits + son quota automatiquement → l'admin crée un client et le crédite → le client fait un dépôt → l'admin génère un code (5 000 crédits) → le client retire avec ce code.
+Parcours de démonstration : un futur admin choisit un pack sur la landing (`/signup`) et reçoit ses crédits + son quota automatiquement → l'admin crée un client et le crédite → le client fait un dépôt → l'admin génère un code (5 000 crédits) → le client retire avec ce code.
 
 ## 2. Architecture
 
@@ -29,7 +29,7 @@ proxy.ts                     Protège /dashboard/* et /login (Next 16 : "middlew
 app/
   page.tsx                   Landing CLIENT (accueil) : aucun lien vers l'espace admin
   admin/page.tsx             Landing ADMIN, adresse communiquée aux admins (outils, packs, inscription)
-  signup/page.tsx            Inscription d'un admin par achat (simulé) d'un pack
+  signup/page.tsx            Inscription d'un admin par achat d'un pack
   login/page.tsx             Connexion email + mot de passe
   dashboard/
     layout.tsx               En-tête + <Suspense> (Cache Components)
@@ -76,7 +76,7 @@ Navigateur ──form──▶ Server Action generateWithdrawalCode
 
 ## 4. Règles métier (choix de conception à connaître)
 
-- **Les admins s'inscrivent eux-mêmes** depuis les cartes de pricing de la landing : choix d'un pack → compte créé, crédits et quota attribués, connexion automatique. Les packs sont définis dans `lib/plans.ts`. Le **super admin ne crée plus d'admins** ; il ajuste crédits/quotas, tarifs et supervise. Le paiement est simulé : n'importe qui peut donc s'offrir des crédits (acceptable pour un simulateur ; un vrai produit brancherait un PSP et ajouterait un anti-abus).
+- **Les admins s'inscrivent eux-mêmes** depuis les cartes de pricing de la landing : choix d'un pack → compte créé, crédits et quota attribués, connexion automatique. Les packs sont définis dans `lib/plans.ts`. Le **super admin ne crée plus d'admins** ; il ajuste crédits/quotas, tarifs et supervise. Aucun paiement réel n'est débité : n'importe qui peut donc s'offrir des crédits (acceptable ici ; un vrai produit brancherait un prestataire de paiement et ajouterait un anti-abus).
 - **L'admin crée ses clients et leur transmet leurs accès** : après création, il obtient un message prêt à envoyer (e-mail, mot de passe, lien de connexion) avec les boutons Copier, WhatsApp et E-mail. Le mot de passe n'est affiché qu'une fois. Aucun e-mail n'est envoyé automatiquement par le serveur (pas de fournisseur d'envoi configuré).
 - **Admin sans crédits (`credits = 0`) → espace verrouillé** (il ne peut ni créer de client, ni créditer, ni générer de code).
 - **Créditer un client ne consomme pas les crédits de l'admin** ; seuls les **codes de retrait** coûtent des crédits (5 000 par défaut, modifiable par le super admin dans `settings`). Le sujet ne précisait pas ce point — c'est un paramétrage simple à changer dans `rpc_admin_credit_client`.

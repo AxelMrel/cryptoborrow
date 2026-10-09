@@ -7,7 +7,7 @@ export default function SiteFooter({ audience }: { audience: "client" | "admin" 
         <Link href="/login" className="hover:text-brand">Connexion</Link>
         {audience === "admin" && <Link href="/signup" className="hover:text-brand">Devenir admin</Link>}
       </div>
-      CoinPulse est un projet pédagogique. Toutes les opérations sont simulées, aucun fonds réel n&apos;est manipulé.
+      CoinPulse est un projet pédagogique. Aucun fonds réel n&apos;est manipulé.
       <br />Photos : Unsplash.
     </footer>
   );

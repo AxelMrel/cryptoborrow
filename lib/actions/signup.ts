@@ -9,7 +9,7 @@ import { getPlan } from "@/lib/plans";
 import { isEmail } from "@/lib/validation";
 
 /**
- * Inscription d'un admin depuis la landing : choix d'un pack, paiement SIMULÉ,
+ * Inscription d'un admin depuis la landing : choix d'un pack, paiement sans débit réel,
  * création du compte Auth + du profil (crédits et quota du pack), puis connexion automatique.
  */
 export async function signupAdmin(_prev: ActionState, formData: FormData): Promise<ActionState> {

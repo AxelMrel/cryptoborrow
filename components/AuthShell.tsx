@@ -20,7 +20,7 @@ export default function AuthShell({ title, subtitle, photo, quote, homeHref = "/
           <h1 className="mt-10 text-3xl font-semibold">{title}</h1>
           <p className="mb-7 mt-2 text-sm text-slate-500">{subtitle}</p>
           {children}
-          <p className="mt-8 text-center text-xs text-slate-400">Simulation pédagogique, aucun vrai paiement.</p>
+          <p className="mt-8 text-center text-xs text-slate-400">Projet pédagogique, aucun vrai paiement.</p>
         </div>
       </section>
       <aside className="relative hidden lg:block">

@@ -15,7 +15,7 @@ export async function deposit(_prev: ActionState, formData: FormData): Promise<A
   const r = await callRpc("rpc_client_deposit", { p_client: me.id, p_amount: amount });
   if (!r.ok) return fail(errorMessage(r.error));
   revalidatePath("/dashboard/client");
-  return done(`Dépôt simulé de ${fcfa(amount)} effectué.`);
+  return done(`Dépôt de ${fcfa(amount)} effectué.`);
 }
 
 export async function withdraw(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -33,5 +33,5 @@ export async function withdraw(_prev: ActionState, formData: FormData): Promise<
     return fail(errorMessage(r.error) + extra);
   }
   revalidatePath("/dashboard/client");
-  return done(`Retrait simulé de ${fcfa(amount)} effectué.`);
+  return done(`Retrait de ${fcfa(amount)} effectué.`);
 }

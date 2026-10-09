@@ -1,5 +1,5 @@
 -- =====================================================================
--- CryptoBO — Schéma complet (SIMULATEUR : aucun vrai argent)
+-- CoinPulse : schéma complet (aucun vrai argent)
 -- À exécuter une fois dans Supabase > SQL Editor.
 -- Montants en FCFA (XOF), entiers (bigint).
 -- =====================================================================
@@ -220,7 +220,7 @@ begin
   return jsonb_build_object('ok', true);
 end $$;
 
--- Dépôt simulé d'un client.
+-- Dépôt d'un client.
 create or replace function public.rpc_client_deposit(
   p_client uuid, p_amount bigint
 ) returns jsonb language plpgsql security definer set search_path = public as $$
@@ -265,7 +265,7 @@ exception when unique_violation then
   return jsonb_build_object('ok', false, 'error', 'CODE_COLLISION');  -- l'appelant retente avec un autre code
 end $$;
 
--- Retrait simulé : valide le code ET débite le solde dans la même transaction SQL.
+-- Retrait : valide le code ET débite le solde dans la même transaction SQL.
 create or replace function public.rpc_client_withdraw(
   p_client uuid, p_amount bigint, p_code text
 ) returns jsonb language plpgsql security definer set search_path = public as $$
