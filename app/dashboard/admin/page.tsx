@@ -5,7 +5,6 @@ import type { Profile, Transaction, WithdrawalCode } from "@/lib/types";
 import { Badge, Card, Stat, Table, Td, TransactionsTable } from "@/components/dashboard/ui";
 import { ClientActions, CreateClientForm } from "@/components/dashboard/admin-forms";
 import Welcome from "@/components/dashboard/Welcome";
-import MarketPanel from "@/components/charts/MarketPanel";
 import { LiveTicker } from "@/components/charts/LiveTicker";
 import { Donut, FlowBars, RankBars } from "@/components/charts/StatCharts";
 import { dailyFlows, typeBreakdown } from "@/lib/stats";
@@ -63,12 +62,9 @@ export default async function AdminDashboard() {
         <Card title="Répartition des opérations"><Donut data={typeBreakdown(txs)} /></Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card title="Soldes de mes clients">
-          <RankBars data={clients.map((c) => ({ name: c.full_name, value: c.balance }))} empty="Créez votre premier client pour voir ses soldes." />
-        </Card>
-        <MarketPanel />
-      </div>
+      <Card title="Soldes de mes clients">
+        <RankBars data={clients.map((c) => ({ name: c.full_name, value: c.balance }))} empty="Créez votre premier client pour voir ses soldes." />
+      </Card>
 
       <Card title="Créer un client">
         {quotaFull ? (

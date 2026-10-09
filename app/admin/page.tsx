@@ -15,7 +15,7 @@ const TOOLS = [
   { icon: <SendIcon />, title: "Envoyez-leur leurs accès", text: "Après la création, copiez les coordonnées ou envoyez-les par WhatsApp ou e-mail en un clic." },
   { icon: <CoinsIcon />, title: "Créditez leurs comptes", text: "Alimentez le solde de vos clients et gardez la trace de chaque opération." },
   { icon: <KeyIcon />, title: "Générez les codes de retrait", text: "Chaque code coûte des crédits. Il est à usage unique, lié à un client et limité dans le temps." },
-  { icon: <ChartIcon />, title: "Pilotez avec des graphes", text: "Flux des 14 derniers jours, soldes par client, répartition des opérations et marchés en direct." },
+  { icon: <ChartIcon />, title: "Pilotez avec des graphes", text: "Flux des 14 derniers jours, soldes par client, répartition des opérations." },
 ];
 
 const STEPS = [
