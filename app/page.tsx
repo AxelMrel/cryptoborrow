@@ -26,7 +26,7 @@ const FEATURES = [
 
 export default function Home() {
   return (
-    <div className="overflow-x-clip">
+    <div id="top" className="overflow-x-clip">
       <SiteNav audience="client" />
 
       <header className="relative px-4 pb-20 pt-12 sm:pt-16">
@@ -59,7 +59,6 @@ export default function Home() {
               <p className="text-xs text-slate-400">Solde disponible</p>
               <p className="mt-1 text-xl font-semibold">250 000 FCFA</p>
               <p className="mt-1 text-xs font-medium text-up">▲ +20 000 FCFA aujourd&apos;hui</p>
-              <p className="mt-2 text-[10px] text-slate-300">Exemple illustratif</p>
             </div>
           </div>
         </div>

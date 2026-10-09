@@ -48,9 +48,6 @@ export default function SignupForm({ plans, defaultPlanId }: { plans: Plan[]; de
         <label className="label" htmlFor="su-pass">Mot de passe (8 caractères minimum)</label>
         <input id="su-pass" name="password" type="password" required minLength={8} className="input" autoComplete="new-password" />
       </div>
-      <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
-        Aucun montant n&apos;est réellement débité.
-      </p>
       <SubmitButton className="btn btn-primary w-full">
         {plan ? `Payer ${fcfa(plan.price)} et créer mon espace` : "Créer mon espace"}
       </SubmitButton>

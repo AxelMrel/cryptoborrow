@@ -17,7 +17,6 @@ export default function BalanceHero({ name, balance, received, withdrawn }: {
         <p className="text-sm text-white/75">Bonjour {first}</p>
         <p className="mt-4 text-xs font-medium uppercase tracking-[0.2em] text-white/70">Solde de mon portefeuille</p>
         <p className="mt-2 break-words text-4xl font-bold leading-tight sm:text-6xl">{fcfa(balance)}</p>
-        <p className="mt-1 text-xs text-white/60">Aucun fonds réel</p>
 
         <div className="mt-7 flex flex-wrap gap-3">
           <a href="#depot" className="btn bg-white !px-6 !py-3 !text-brand hover:bg-slate-100">Déposer</a>
