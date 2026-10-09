@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import CoinIcon from "@/components/CoinIcon";
-import { formatPrice, useBinanceTickers, useFxRates } from "@/lib/market";
+import { formatEuro, formatPrice, useBinanceTickers, useFxRates } from "@/lib/market";
 
 /** Carte "Bitcoin en direct" avec mini-courbe (historique 1 min Binance + ticks WebSocket). */
 export default function LiveBtcCard() {
   const { tickers } = useBinanceTickers();
-  const { xofPerUsd } = useFxRates();
+  const { eurPerUsd } = useFxRates();
   const [hist, setHist] = useState<number[]>([]);
   const t = tickers["BTCUSDT"];
 
@@ -37,7 +37,7 @@ export default function LiveBtcCard() {
       </div>
       <p className="mt-3 font-mono text-xl font-semibold">{t ? `${formatPrice(t.price)} $` : "…"}</p>
       <p className="font-mono text-[11px] text-slate-500">
-        {t && xofPerUsd ? `≈ ${Math.round(t.price * xofPerUsd).toLocaleString("fr-FR")} FCFA` : " "}
+        {t && eurPerUsd ? `≈ ${formatEuro(t.price * eurPerUsd)}` : " "}
       </p>
       <svg viewBox="0 0 100 36" className="mt-2 h-10 w-full" preserveAspectRatio="none" aria-hidden>
         {pts.length > 1 && <path d={path} fill="none" stroke={up ? "#12a150" : "#e5484d"} strokeWidth="1.6" vectorEffect="non-scaling-stroke" />}

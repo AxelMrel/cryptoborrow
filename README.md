@@ -1,4 +1,4 @@
-# CoinPulse : plateforme d'échange / portefeuille crypto (FCFA)
+# CoinPulse : plateforme d'échange / portefeuille crypto (euros)
 
 > **Projet pédagogique.** Aucun vrai paiement, aucun vrai retrait.
 
@@ -90,7 +90,7 @@ Navigateur ──form──▶ Server Action generateWithdrawalCode
 |---|---|---|
 | Cryptos (ticker + bougies 1 min) | **WebSocket public Binance** (`stream.binance.com`) + REST `klines` | Direct depuis le navigateur, sans clé |
 | Devises | **Frankfurter** (taux BCE) | Direct depuis le navigateur, rafraîchi toutes les 5 min |
-| FCFA | Parité fixe **1 EUR = 655,957 XOF** | Le XOF n'est pas publié par la BCE ; on le déduit de la parité officielle |
+| Euros | Taux Frankfurter (BCE) | Équivalent en euros des cryptos cotées en dollars |
 
 Aucune API personnalisée n'a été créée. Les taux BCE sont **quotidiens** (pas de tick à la seconde) ; seules les cryptos sont réellement « live ».
 Si Binance est bloqué sur votre réseau (certains pays/entreprises), les graphes crypto affichent un message d'erreur.

@@ -8,7 +8,7 @@ export function AdminActions({ adminId, maxClients }: { adminId: string; maxClie
     <div className="grid gap-4 md:grid-cols-2">
       <ActionForm action={grantAdminCredits} className="space-y-1">
         <input type="hidden" name="admin_id" value={adminId} />
-        <label className="label" htmlFor={`gc-${adminId}`}>Ajouter des crédits (FCFA)</label>
+        <label className="label" htmlFor={`gc-${adminId}`}>Ajouter des crédits</label>
         <div className="flex gap-2">
           <input id={`gc-${adminId}`} name="amount" inputMode="numeric" required className="input" placeholder="ex. 50000" />
           <SubmitButton className="btn btn-ghost">Créditer</SubmitButton>

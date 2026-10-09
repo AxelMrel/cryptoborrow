@@ -1,7 +1,7 @@
 -- =====================================================================
 -- CoinPulse : schéma complet (aucun vrai argent)
 -- À exécuter une fois dans Supabase > SQL Editor.
--- Montants en FCFA (XOF), entiers (bigint).
+-- Montants en euros, entiers (bigint).
 -- =====================================================================
 
 create extension if not exists pgcrypto;

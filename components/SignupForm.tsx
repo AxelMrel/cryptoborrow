@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signupAdmin } from "@/lib/actions/signup";
-import { fcfa, num } from "@/lib/format";
+import { money, num } from "@/lib/format";
 import type { Plan } from "@/lib/types";
 import { ActionForm, SubmitButton } from "@/components/dashboard/forms";
 
@@ -26,7 +26,7 @@ export default function SignupForm({ plans, defaultPlanId }: { plans: Plan[]; de
               }`}
             >
               <p className="font-semibold">{p.name}</p>
-              <p className="text-xs text-slate-500">{fcfa(p.price)}</p>
+              <p className="text-xs text-slate-500">{money(p.price)}</p>
             </button>
           ))}
         </div>
@@ -49,7 +49,7 @@ export default function SignupForm({ plans, defaultPlanId }: { plans: Plan[]; de
         <input id="su-pass" name="password" type="password" required minLength={8} className="input" autoComplete="new-password" />
       </div>
       <SubmitButton className="btn btn-primary w-full">
-        {plan ? `Payer ${fcfa(plan.price)} et créer mon espace` : "Créer mon espace"}
+        {plan ? `Payer ${money(plan.price)} et créer mon espace` : "Créer mon espace"}
       </SubmitButton>
     </ActionForm>
   );

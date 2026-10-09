@@ -71,7 +71,7 @@ export function TransactionsTable({
     viewerId ? t.to_user === viewerId : t.type === "deposit" || t.type === "client_credit" || t.type === "admin_credit";
   const subject = (t: Transaction) => (viewerId ? null : names[t.to_user ?? t.from_user ?? ""] ?? null);
   return (
-    <Table head={["Date", "Type", "Montant (FCFA)"]} empty="Aucune transaction pour le moment." minWidth="min-w-0">
+    <Table head={["Date", "Type", "Montant (€)"]} empty="Aucune transaction pour le moment." minWidth="min-w-0">
       {txs.map((t) => (
         <tr key={t.id}>
           <Td className="whitespace-nowrap text-slate-500"><span title={dateTime(t.created_at)}>{dateShort(t.created_at)}</span></Td>

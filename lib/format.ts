@@ -1,7 +1,8 @@
 import type { TxType, WithdrawalCode } from "./types";
 
 const nf = new Intl.NumberFormat("fr-FR");
-export const fcfa = (n: number) => `${nf.format(Math.round(n))} FCFA`;
+const eur = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+export const money = (n: number) => eur.format(Math.round(n));
 export const num = (n: number) => nf.format(n);
 
 export const dateTime = (iso: string) =>

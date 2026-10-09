@@ -6,7 +6,7 @@ import type { ActionState } from "@/lib/types";
 import { callRpc, done, errorMessage, fail, guard } from "@/lib/rpc";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isEmail, isUuid, parseAmount } from "@/lib/validation";
-import { fcfa } from "@/lib/format";
+import { money, num } from "@/lib/format";
 
 const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // sans 0/O/1/I
 const newCode = () =>
@@ -59,7 +59,7 @@ export async function creditClient(_prev: ActionState, formData: FormData): Prom
   const r = await callRpc("rpc_admin_credit_client", { p_admin: me.id, p_client: clientId, p_amount: amount });
   if (!r.ok) return fail(errorMessage(r.error));
   revalidatePath("/dashboard/admin");
-  return done(`Compte crédité de ${fcfa(amount)}.`);
+  return done(`Compte crédité de ${money(amount)}.`);
 }
 
 export async function generateWithdrawalCode(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -77,11 +77,11 @@ export async function generateWithdrawalCode(_prev: ActionState, formData: FormD
     });
     if (r.ok) {
       revalidatePath("/dashboard/admin");
-      return done(`Code généré : ${r.code} (frais : ${fcfa(Number(r.fee))} de crédits). Communiquez-le au client.`);
+      return done(`Code généré : ${r.code} (frais : ${num(Number(r.fee))} crédits). Communiquez-le au client.`);
     }
     if (r.error !== "CODE_COLLISION") {
       const extra = r.error === "INSUFFICIENT_CREDITS"
-        ? ` Il faut ${fcfa(Number(r.fee))}, vous avez ${fcfa(Number(r.credits))}.` : "";
+        ? ` Il faut ${num(Number(r.fee))} crédits, vous avez ${num(Number(r.credits))}.` : "";
       return fail(errorMessage(r.error) + extra);
     }
   }

@@ -7,8 +7,8 @@ import { ChartIcon, IconBadge, KeyIcon, ShieldIcon, WalletIcon } from "@/compone
 import { LiveTicker, MarketsGrid } from "@/components/charts/LiveTicker";
 
 export const metadata = {
-  title: "CoinPulse | Votre portefeuille crypto en FCFA",
-  description: "Votre portefeuille en FCFA, les marchés en direct et des retraits sécurisés par code.",
+  title: "CoinPulse | Votre portefeuille crypto en euros",
+  description: "Votre portefeuille en euros, les marchés en direct et des retraits sécurisés par code.",
 };
 
 const ACCESS = [
@@ -18,7 +18,7 @@ const ACCESS = [
 ];
 
 const FEATURES = [
-  { icon: <WalletIcon />, title: "Un portefeuille en FCFA", text: "Votre solde, vos dépôts et vos retraits, avec une courbe d'évolution et un historique clair." },
+  { icon: <WalletIcon />, title: "Un portefeuille en euros", text: "Votre solde, vos dépôts et vos retraits, avec une courbe d'évolution et un historique clair." },
   { icon: <ChartIcon />, title: "Marchés en temps réel", text: "Cours des cryptos et taux de change dans votre espace, avec des graphes détaillés." },
   { icon: <KeyIcon />, title: "Retraits par code", text: "Pour retirer, demandez un code à votre admin. Il est à usage unique et limité dans le temps." },
   { icon: <ShieldIcon />, title: "Vos données, rien que les vôtres", text: "Vous ne voyez que votre compte. La séparation est garantie par la base de données." },
@@ -37,7 +37,7 @@ export default function Home() {
               Espace client
             </p>
             <h1 className="animate-fade-up mt-5 text-[34px] font-semibold leading-[1.3] tracking-tight [animation-delay:100ms] sm:text-[48px] sm:leading-[1.2]">
-              Votre portefeuille crypto, <span className="text-brand">en FCFA</span>
+              Votre portefeuille crypto, <span className="text-brand">en euros</span>
             </h1>
             <p className="animate-fade-up mt-5 max-w-lg text-lg leading-relaxed text-slate-500 [animation-delay:200ms]">
               Suivez votre solde, les marchés en direct et retirez en toute sécurité. Votre admin crée votre compte et vous remet vos accès.
@@ -57,8 +57,8 @@ export default function Home() {
             <div className="animate-float absolute -left-3 top-10 sm:-left-8"><LiveBtcCard /></div>
             <div className="animate-float absolute -bottom-6 right-2 w-56 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_18px_44px_rgba(18,22,58,0.14)] [animation-delay:-3s] sm:-right-6">
               <p className="text-xs text-slate-400">Solde disponible</p>
-              <p className="mt-1 text-xl font-semibold">250 000 FCFA</p>
-              <p className="mt-1 text-xs font-medium text-up">▲ +20 000 FCFA aujourd&apos;hui</p>
+              <p className="mt-1 text-xl font-semibold">2 500 €</p>
+              <p className="mt-1 text-xs font-medium text-up">▲ +200 € aujourd&apos;hui</p>
             </div>
           </div>
         </div>
@@ -106,7 +106,7 @@ export default function Home() {
       <section id="marches" className="scroll-mt-24 bg-surface px-4 py-20">
         <div className="mx-auto max-w-[1160px]">
           <h2 className="text-center text-3xl font-semibold sm:text-4xl">Les marchés <span className="text-brand">en direct</span></h2>
-          <p className="mx-auto mb-10 mt-3 max-w-xl text-center text-slate-500">Prix en dollars et équivalent en FCFA, mis à jour en continu.</p>
+          <p className="mx-auto mb-10 mt-3 max-w-xl text-center text-slate-500">Prix en dollars et équivalent en euros, mis à jour en continu.</p>
           <MarketsGrid />
         </div>
       </section>

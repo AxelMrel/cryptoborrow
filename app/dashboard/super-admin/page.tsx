@@ -1,6 +1,6 @@
 import { requireRole } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
-import { codeStatus, dateTime, fcfa, num } from "@/lib/format";
+import { codeStatus, dateTime, money, num } from "@/lib/format";
 import type { Profile, Transaction, WithdrawalCode } from "@/lib/types";
 import { Badge, Card, Stat, Table, Td, TransactionsTable } from "@/components/dashboard/ui";
 import { AdminActions, SettingForm } from "@/components/dashboard/super-admin-forms";
@@ -43,7 +43,7 @@ export default async function SuperAdminDashboard() {
   const SETTING_LABELS: Record<string, string> = {
     withdrawal_code_fee: "Frais par code de retrait (crédits)",
     withdrawal_code_ttl_minutes: "Validité d'un code (minutes)",
-    max_operation_amount: "Montant max par opération (FCFA)",
+    max_operation_amount: "Montant max par opération (€)",
   };
 
   return (
@@ -53,9 +53,9 @@ export default async function SuperAdminDashboard() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Admins" value={num(admins.length)} />
         <Stat label="Clients" value={num(clients.length)} />
-        <Stat label="Soldes clients" value={fcfa(clients.reduce((s, c) => s + c.balance, 0))} />
-        <Stat label="Crédits admins" value={fcfa(admins.reduce((s, a) => s + a.credits, 0))} />
-        <Stat label="Frais encaissés" value={fcfa(feesCollected)} hint="Codes de retrait" />
+        <Stat label="Soldes clients" value={money(clients.reduce((s, c) => s + c.balance, 0))} />
+        <Stat label="Crédits admins" value={`${num(admins.reduce((s, a) => s + a.credits, 0))} crédits`} />
+        <Stat label="Frais encaissés" value={`${num(feesCollected)} crédits`} hint="Codes de retrait" />
         <Stat label="Transactions" value={num(txCountRes.count ?? 0)} />
         <Stat label="Codes générés" value={num(codes.length)} hint={`${codes.filter((c) => codeStatus(c) === "active").length} actif(s)`} />
         <Stat label="Clients / admin" value={admins.length ? (clients.length / admins.length).toFixed(1) : "0"} hint="Moyenne" />
@@ -84,7 +84,7 @@ export default async function SuperAdminDashboard() {
                   <p className="text-xs text-slate-500">{a.email}</p>
                 </div>
                 <div className="flex gap-2 text-sm">
-                  <Badge tone={a.credits > 0 ? "cyan" : "red"}>{fcfa(a.credits)}</Badge>
+                  <Badge tone={a.credits > 0 ? "cyan" : "red"}>{num(a.credits)} crédits</Badge>
                   <Badge tone="gray">{clientCount(a.id)} / {a.max_clients} clients</Badge>
                 </div>
               </div>
@@ -109,7 +109,7 @@ export default async function SuperAdminDashboard() {
               <Td>{c.full_name}</Td>
               <Td className="text-slate-500">{c.email}</Td>
               <Td>{c.created_by ? names[c.created_by] ?? "Inconnu" : "Plateforme"}</Td>
-              <Td className="font-mono">{fcfa(c.balance)}</Td>
+              <Td className="font-mono">{money(c.balance)}</Td>
               <Td className="whitespace-nowrap text-slate-500">{dateTime(c.created_at)}</Td>
             </tr>
           ))}
@@ -126,7 +126,7 @@ export default async function SuperAdminDashboard() {
                 <Td>{names[c.admin_id] ?? "Inconnu"}</Td>
                 <Td>{names[c.client_id] ?? "Inconnu"}</Td>
                 <Td className="font-mono tracking-widest">{c.code}</Td>
-                <Td>{c.amount ? fcfa(c.amount) : "Libre"}</Td>
+                <Td>{c.amount ? money(c.amount) : "Libre"}</Td>
                 <Td className="whitespace-nowrap text-slate-500">{dateTime(c.expires_at)}</Td>
                 <Td><Badge tone={st === "active" ? "cyan" : st === "used" ? "green" : "gray"}>{st === "active" ? "Actif" : st === "used" ? "Utilisé" : "Expiré"}</Badge></Td>
               </tr>

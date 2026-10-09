@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { ActionState } from "@/lib/types";
 import { callRpc, done, errorMessage, fail, guard } from "@/lib/rpc";
 import { isUuid, parseAmount } from "@/lib/validation";
-import { fcfa } from "@/lib/format";
+import { num } from "@/lib/format";
 
 const refresh = () => revalidatePath("/dashboard/super-admin");
 
@@ -18,7 +18,7 @@ export async function grantAdminCredits(_prev: ActionState, formData: FormData):
   const r = await callRpc("rpc_grant_admin_credits", { p_super: me.id, p_admin: adminId, p_amount: amount });
   if (!r.ok) return fail(errorMessage(r.error));
   refresh();
-  return done(`${fcfa(amount)} de crédits attribués.`);
+  return done(`${num(amount)} crédits attribués.`);
 }
 
 export async function setMaxClients(_prev: ActionState, formData: FormData): Promise<ActionState> {

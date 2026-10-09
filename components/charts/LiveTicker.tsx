@@ -1,7 +1,7 @@
 "use client";
 
 import CoinIcon from "@/components/CoinIcon";
-import { COINS, formatPrice, useBinanceTickers, useFxRates } from "@/lib/market";
+import { COINS, formatEuro, formatPrice, useBinanceTickers, useFxRates } from "@/lib/market";
 
 function Change({ pct }: { pct: number }) {
   return <span className={pct >= 0 ? "text-up" : "text-down"}>{pct >= 0 ? "▲" : "▼"} {Math.abs(pct).toFixed(2)}%</span>;
@@ -38,7 +38,7 @@ export function LiveTicker() {
 /** Cartes "marchés en direct" (landing page). */
 export function MarketsGrid() {
   const { tickers, live } = useBinanceTickers();
-  const { xofPerUsd } = useFxRates();
+  const { eurPerUsd } = useFxRates();
   return (
     <div>
       <p className="mb-4 flex items-center justify-center gap-2 text-sm text-slate-500">
@@ -56,7 +56,7 @@ export function MarketsGrid() {
               </div>
               <p className="mt-3 font-mono text-xl">{t ? `${formatPrice(t.price)} $` : "…"}</p>
               <p className="mt-1 font-mono text-xs text-slate-500">
-                {t && xofPerUsd ? `≈ ${Math.round(t.price * xofPerUsd).toLocaleString("fr-FR")} FCFA` : " "}
+                {t && eurPerUsd ? `≈ ${formatEuro(t.price * eurPerUsd)}` : " "}
               </p>
               <p className="mt-2 text-sm">{t ? <Change pct={t.changePct} /> : null}</p>
             </div>

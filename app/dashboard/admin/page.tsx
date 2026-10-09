@@ -1,6 +1,6 @@
 import { requireRole } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
-import { codeStatus, dateTime, fcfa } from "@/lib/format";
+import { codeStatus, dateTime, money, num } from "@/lib/format";
 import type { Profile, Transaction, WithdrawalCode } from "@/lib/types";
 import { Badge, Card, Stat, Table, Td, TransactionsTable } from "@/components/dashboard/ui";
 import { ClientActions, CreateClientForm } from "@/components/dashboard/admin-forms";
@@ -39,7 +39,7 @@ export default async function AdminDashboard() {
       <Card>
         <h1 className="text-2xl font-bold text-brand">Espace verrouillé</h1>
         <p className="mt-3 text-slate-700">
-          Votre solde de crédits est de 0 FCFA. Contactez le super admin pour obtenir des crédits et débloquer votre espace.
+          Votre solde est de 0 crédit. Contactez le super admin pour obtenir des crédits et débloquer votre espace.
         </p>
       </Card>
     );
@@ -52,7 +52,7 @@ export default async function AdminDashboard() {
       <Welcome name={me.full_name} photo="/images/partners.jpg" subtitle="Gérez vos clients, créditez leurs comptes et générez leurs codes de retrait." />
       <div className="-mx-4 overflow-hidden border-y border-slate-200 bg-white"><LiveTicker /></div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Stat label="Crédits" value={fcfa(me.credits)} hint={`Un code de retrait coûte ${fcfa(fee)}`} />
+        <Stat label="Crédits" value={`${num(me.credits)} crédits`} hint={`Un code de retrait coûte ${num(fee)} crédits`} />
         <Stat label="Clients / quota" value={`${clients.length} / ${me.max_clients}`} hint={quotaFull ? "Quota atteint" : "Places restantes : " + (me.max_clients - clients.length)} />
         <Stat label="Codes générés" value={codes.length} hint={`${codes.filter((c) => codeStatus(c) === "active").length} actif(s)`} />
       </div>
@@ -84,7 +84,7 @@ export default async function AdminDashboard() {
                   <p className="font-semibold">{c.full_name}</p>
                   <p className="text-xs text-slate-500">{c.email}</p>
                 </div>
-                <p className="font-mono text-lg text-brand">{fcfa(c.balance)}</p>
+                <p className="font-mono text-lg text-brand">{money(c.balance)}</p>
               </div>
               <ClientActions clientId={c.id} fee={fee} />
             </div>
@@ -101,7 +101,7 @@ export default async function AdminDashboard() {
                 <Td className="whitespace-nowrap text-slate-500">{dateTime(c.created_at)}</Td>
                 <Td>{names[c.client_id] ?? "Inconnu"}</Td>
                 <Td className="font-mono tracking-widest">{c.code}</Td>
-                <Td>{c.amount ? fcfa(c.amount) : "Libre"}</Td>
+                <Td>{c.amount ? money(c.amount) : "Libre"}</Td>
                 <Td className="whitespace-nowrap text-slate-500">{dateTime(c.expires_at)}</Td>
                 <Td><Badge tone={st === "active" ? "cyan" : st === "used" ? "green" : "gray"}>{st === "active" ? "Actif" : st === "used" ? "Utilisé" : "Expiré"}</Badge></Td>
               </tr>

@@ -96,7 +96,7 @@ export function ClientActions({ clientId, fee }: { clientId: string; fee: number
     <div className="mt-4 grid gap-4 border-t border-slate-200 pt-4 md:grid-cols-2">
       <ActionForm action={creditClient} className="space-y-2">
         <input type="hidden" name="client_id" value={clientId} />
-        <label className="label" htmlFor={`cr-${clientId}`}>Créditer le compte (FCFA)</label>
+        <label className="label" htmlFor={`cr-${clientId}`}>Créditer le compte (€)</label>
         <div className="flex gap-2">
           <input id={`cr-${clientId}`} name="amount" inputMode="numeric" required className="input" placeholder="ex. 100000" />
           <SubmitButton className="btn btn-ghost whitespace-nowrap">Créditer</SubmitButton>

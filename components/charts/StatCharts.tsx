@@ -15,7 +15,7 @@ function Empty({ text }: { text: string }) {
 }
 
 /** Courbe d'évolution (solde, crédits...). */
-export function TrendArea({ data, unit = "FCFA", empty = "Pas encore de données." }: { data: { label: string; value: number }[]; unit?: string; empty?: string }) {
+export function TrendArea({ data, unit = "€", empty = "Pas encore de données." }: { data: { label: string; value: number }[]; unit?: string; empty?: string }) {
   if (data.length < 2) return <div className="h-64"><Empty text={empty} /></div>;
   return (
     <div className="h-64 w-full min-w-0">
@@ -50,7 +50,7 @@ export function FlowBars({ data }: { data: { label: string; entrees: number; sor
           <CartesianGrid stroke="#eef1f7" vertical={false} />
           <XAxis dataKey="label" tick={axis} tickLine={false} axisLine={false} interval="preserveStartEnd" minTickGap={16} />
           <YAxis tick={axis} tickLine={false} axisLine={false} width={48} tickFormatter={short} />
-          <Tooltip contentStyle={tooltipStyle} formatter={(v) => `${nf.format(Number(v))} FCFA`} cursor={{ fill: "#f4f6fb" }} />
+          <Tooltip contentStyle={tooltipStyle} formatter={(v) => `${nf.format(Number(v))} €`} cursor={{ fill: "#f4f6fb" }} />
           <Legend iconType="circle" wrapperStyle={{ fontSize: 12 }} />
           <Bar dataKey="entrees" name="Entrées" fill="#12a150" radius={[4, 4, 0, 0]} />
           <Bar dataKey="sorties" name="Sorties" fill="#e5484d" radius={[4, 4, 0, 0]} />
@@ -61,7 +61,7 @@ export function FlowBars({ data }: { data: { label: string; entrees: number; sor
 }
 
 /** Barres horizontales : valeur par personne (soldes clients, crédits admins). */
-export function RankBars({ data, unit = "FCFA", empty = "Aucune donnée." }: { data: { name: string; value: number }[]; unit?: string; empty?: string }) {
+export function RankBars({ data, unit = "€", empty = "Aucune donnée." }: { data: { name: string; value: number }[]; unit?: string; empty?: string }) {
   if (data.length === 0) return <div className="h-64"><Empty text={empty} /></div>;
   const h = Math.max(256, data.length * 40);
   return (

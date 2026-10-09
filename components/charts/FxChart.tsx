@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { AreaSeries, ColorType, createChart } from "lightweight-charts";
 import { FX_CURRENCIES, fetchFxHistory, type FxCurrency } from "@/lib/market";
 
-/** Valeur en FCFA d'une devise sur 30 jours (taux Frankfurter / BCE, parité EUR-XOF fixe). */
-export default function FxChart({ xofPer }: { xofPer: (cur: string) => number | null }) {
+/** Taux de change de l'euro sur 30 jours (taux Frankfurter / Banque centrale européenne). */
+export default function FxChart({ perEur }: { perEur: Record<string, number> | null }) {
   const box = useRef<HTMLDivElement>(null);
   const [cur, setCur] = useState<FxCurrency>("USD");
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export default function FxChart({ xofPer }: { xofPer: (cur: string) => number | 
     });
     const series = chart.addSeries(AreaSeries, {
       lineColor: "#3563e9", topColor: "rgba(53,99,233,0.28)", bottomColor: "rgba(53,99,233,0)",
-      priceFormat: { type: "price", precision: 2, minMove: 0.01 },
+      priceFormat: { type: "price", precision: 4, minMove: 0.0001 },
     });
     let closed = false;
     fetchFxHistory(cur)
@@ -54,8 +54,8 @@ export default function FxChart({ xofPer }: { xofPer: (cur: string) => number | 
         ))}
       </div>
       <p className="mb-2 font-mono text-lg">
-        1 {cur} = {xofPer(cur)?.toLocaleString("fr-FR", { maximumFractionDigits: 2 }) ?? "…"}{" "}
-        <span className="text-xs text-slate-400">FCFA</span>
+        1 € = {perEur?.[cur]?.toLocaleString("fr-FR", { maximumFractionDigits: 4 }) ?? "…"}{" "}
+        <span className="text-xs text-slate-400">{cur}</span>
       </p>
       {error && <p className="mb-2 text-sm text-down">{error}</p>}
       <div className="relative h-72 w-full min-w-0 overflow-hidden"><div ref={box} className="absolute inset-0" /></div>

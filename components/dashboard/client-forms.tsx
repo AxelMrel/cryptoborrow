@@ -31,7 +31,7 @@ export function WithdrawFlow() {
     return (
       <div className="space-y-3 sm:flex sm:items-end sm:gap-3 sm:space-y-0">
         <div className="sm:flex-1">
-          <label className="label" htmlFor="wd-amount">Montant à retirer (FCFA)</label>
+          <label className="label" htmlFor="wd-amount">Montant à retirer (€)</label>
           <input
             id="wd-amount" inputMode="numeric" className="input" placeholder="ex. 20000"
             value={amount} onChange={(e) => setAmount(e.target.value)}
@@ -53,7 +53,7 @@ export function WithdrawFlow() {
         Contactez votre admin pour obtenir un code de retrait.
       </p>
       <input type="hidden" name="amount" value={amount} />
-      <p className="text-sm text-slate-500">Montant demandé : <span className="font-mono font-semibold text-ink">{amount} FCFA</span></p>
+      <p className="text-sm text-slate-500">Montant demandé : <span className="font-mono font-semibold text-ink">{amount} €</span></p>
       <div>
         <label className="label" htmlFor="wd-code">Code de retrait</label>
         <input id="wd-code" name="code" required autoComplete="off" className="input font-mono uppercase tracking-widest" placeholder="ABCD2345" />

@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { CandlestickSeries, ColorType, createChart, type UTCTimestamp } from "lightweight-charts";
-import { COINS } from "@/lib/market";
+import { COINS, formatEuro } from "@/lib/market";
 
 type Candle = { time: UTCTimestamp; open: number; high: number; low: number; close: number };
 
 /** Bougies 1 min : historique REST Binance + mise à jour en direct via WebSocket (Lightweight Charts). */
-export default function CryptoChart({ xofPerUsd }: { xofPerUsd?: number | null }) {
+export default function CryptoChart({ eurPerUsd }: { eurPerUsd?: number | null }) {
   const box = useRef<HTMLDivElement>(null);
   const [symbol, setSymbol] = useState<string>(COINS[0].symbol);
   const [last, setLast] = useState<number | null>(null);
@@ -80,8 +80,8 @@ export default function CryptoChart({ xofPerUsd }: { xofPerUsd?: number | null }
       {last !== null && (
         <p className="mb-2 font-mono text-lg">
           {last.toLocaleString("fr-FR", { maximumFractionDigits: 4 })} <span className="text-xs text-slate-400">USDT</span>
-          {xofPerUsd ? (
-            <span className="ml-3 text-sm text-slate-500">≈ {Math.round(last * xofPerUsd).toLocaleString("fr-FR")} FCFA</span>
+          {eurPerUsd ? (
+            <span className="ml-3 text-sm text-slate-500">≈ {formatEuro(last * eurPerUsd)}</span>
           ) : null}
         </p>
       )}

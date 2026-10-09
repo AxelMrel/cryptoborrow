@@ -2,9 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-/** Parité fixe officielle : 1 EUR = 655,957 XOF (le XOF n'est pas dans les taux de la BCE/Frankfurter). */
-export const EUR_XOF = 655.957;
-
 export const COINS = [
   { symbol: "BTCUSDT", name: "Bitcoin", short: "BTC" },
   { symbol: "ETHUSDT", name: "Ethereum", short: "ETH" },
@@ -88,9 +85,9 @@ export function useFxRates() {
     };
   }, []);
 
-  /** Valeur de 1 unité de `cur` en FCFA. */
-  const xofPer = (cur: string) => (perEur?.[cur] ? EUR_XOF / perEur[cur] : null);
-  return { perEur, date, xofPer, xofPerUsd: xofPer("USD") };
+  /** Valeur de 1 dollar en euros (pour afficher l'équivalent en euros des cryptos cotées en USD). */
+  const eurPerUsd = perEur?.USD ? 1 / perEur.USD : null;
+  return { perEur, date, eurPerUsd };
 }
 
 export async function fetchFxHistory(cur: FxCurrency, days = 30) {
@@ -100,11 +97,16 @@ export async function fetchFxHistory(cur: FxCurrency, days = 30) {
   const r = await fetch(`${FRANKFURTER}/${iso(start)}..${iso(end)}?base=EUR&symbols=${cur}`);
   const j = await r.json();
   return Object.entries(j.rates as Record<string, Record<string, number>>)
-    .map(([time, v]) => ({ time, value: EUR_XOF / v[cur] }))
+    .map(([time, v]) => ({ time, value: v[cur] }))
     .sort((a, b) => a.time.localeCompare(b.time));
 }
 
 export function formatPrice(p: number) {
   const digits = p >= 100 ? 2 : p >= 1 ? 3 : 5;
   return new Intl.NumberFormat("fr-FR", { maximumFractionDigits: digits, minimumFractionDigits: p >= 100 ? 2 : 0 }).format(p);
+}
+
+/** Prix en euros : 2 décimales au-dessus de 1 €, 4 en dessous (petites cryptos). */
+export function formatEuro(n: number) {
+  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: n >= 100 ? 0 : n >= 1 ? 2 : 4 }).format(n);
 }

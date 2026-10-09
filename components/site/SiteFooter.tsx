@@ -4,7 +4,7 @@ import Logo from "@/components/Logo";
 const CONTENT = {
   client: {
     home: "/",
-    blurb: "Votre portefeuille crypto en FCFA, les marchés en direct et des retraits sécurisés par code.",
+    blurb: "Votre portefeuille crypto en euros, les marchés en direct et des retraits sécurisés par code.",
     columns: [
       {
         title: "Découvrir",
@@ -74,7 +74,7 @@ export default function SiteFooter({ audience }: { audience: "client" | "admin" 
         <div>
           <h3 className="text-sm font-semibold text-ink">Données de marché</h3>
           <p className="mt-4 text-sm leading-relaxed text-slate-500">
-            Cours des cryptos en direct via Binance, taux de change publiés par la Banque centrale européenne, convertis en FCFA.
+            Cours des cryptos en direct via Binance, taux de change publiés par la Banque centrale européenne, convertis en euros.
           </p>
         </div>
       </div>

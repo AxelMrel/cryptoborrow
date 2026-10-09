@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { ActionState } from "@/lib/types";
 import { callRpc, done, errorMessage, fail, guard } from "@/lib/rpc";
 import { parseAmount } from "@/lib/validation";
-import { fcfa } from "@/lib/format";
+import { money } from "@/lib/format";
 
 export async function withdraw(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const me = await guard("client");
@@ -17,9 +17,9 @@ export async function withdraw(_prev: ActionState, formData: FormData): Promise<
   // Validation du code + débit du solde : une seule transaction SQL atomique.
   const r = await callRpc("rpc_client_withdraw", { p_client: me.id, p_amount: amount, p_code: code });
   if (!r.ok) {
-    const extra = r.error === "CODE_AMOUNT_MISMATCH" ? ` Montant attendu : ${fcfa(Number(r.expected))}.` : "";
+    const extra = r.error === "CODE_AMOUNT_MISMATCH" ? ` Montant attendu : ${money(Number(r.expected))}.` : "";
     return fail(errorMessage(r.error) + extra);
   }
   revalidatePath("/dashboard/client");
-  return done(`Retrait de ${fcfa(amount)} effectué.`);
+  return done(`Retrait de ${money(amount)} effectué.`);
 }

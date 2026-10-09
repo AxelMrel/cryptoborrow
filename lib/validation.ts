@@ -1,4 +1,4 @@
-/** Montant FCFA entier strictement positif, sinon null. */
+/** Montant en euros entier strictement positif, sinon null. */
 export function parseAmount(v: FormDataEntryValue | null, max = 10_000_000): number | null {
   const s = String(v ?? "").replace(/\s/g, "");
   if (!/^\d{1,12}$/.test(s)) return null;

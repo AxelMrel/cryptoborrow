@@ -8,7 +8,7 @@ import FxChart from "./FxChart";
 /** Graphes temps réel du dashboard client : cryptos (Binance WS) et devises (Frankfurter). */
 export default function MarketPanel() {
   const [tab, setTab] = useState<"crypto" | "fx">("crypto");
-  const { xofPer, xofPerUsd, date } = useFxRates();
+  const { perEur, eurPerUsd, date } = useFxRates();
   return (
     <div className="card min-w-0 p-5">
       <div className="mb-4 flex items-center justify-between">
@@ -27,7 +27,7 @@ export default function MarketPanel() {
         </div>
         {tab === "fx" && date && <span className="text-xs text-slate-400">Taux BCE du {date}</span>}
       </div>
-      {tab === "crypto" ? <CryptoChart xofPerUsd={xofPerUsd} /> : <FxChart xofPer={xofPer} />}
+      {tab === "crypto" ? <CryptoChart eurPerUsd={eurPerUsd} /> : <FxChart perEur={perEur} />}
     </div>
   );
 }

@@ -72,7 +72,7 @@ export default function BalanceHero({ balance }: { balance: number }) {
 
           <p className="mt-2 flex items-baseline gap-2">
             <span className="break-all text-4xl font-bold leading-none sm:text-5xl">{hidden ? "••••••" : num(balance)}</span>
-            <span className="text-base font-semibold text-white/80 sm:text-xl">FCFA</span>
+            <span className="text-base font-semibold text-white/80 sm:text-xl">€</span>
           </p>
 
           <div className="mt-5 flex gap-3">

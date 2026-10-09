@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PLANS } from "@/lib/plans";
-import { fcfa, num } from "@/lib/format";
+import { money, num } from "@/lib/format";
 import { CheckIcon } from "@/components/Icons";
 
 /** Cartes de pricing de la landing (définies dans lib/plans.ts). */
@@ -22,7 +22,7 @@ export default function PricingCards() {
             </span>
           )}
           <h3 className="text-lg font-semibold">{p.name}</h3>
-          <p className="mt-4 text-4xl font-bold">{fcfa(p.price)}</p>
+          <p className="mt-4 text-4xl font-bold">{money(p.price)}</p>
           <p className={`mt-1 text-xs ${p.highlight ? "text-white/70" : "text-slate-400"}`}>paiement unique</p>
           <ul className={`mt-6 flex-1 space-y-3 text-sm ${p.highlight ? "text-white/90" : "text-slate-700"}`}>
             <li className="flex items-start gap-2"><CheckIcon className="mt-0.5 h-4 w-4 shrink-0" /><span><b>{num(p.credits)}</b> crédits inclus</span></li>
