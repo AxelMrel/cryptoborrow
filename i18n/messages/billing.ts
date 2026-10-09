@@ -58,6 +58,16 @@ export const billing = pair(
       error: "Vérification impossible",
       errorText: "Nous n'avons pas pu joindre FedaPay. Réessayez dans un instant : rien n'est créé tant que le paiement n'est pas confirmé.",
     },
+    recap: {
+      title: "Récapitulatif",
+      client: "Client",
+      email: "E-mail",
+      status: "Statut",
+      active: "Compte actif",
+      amount: "Montant payé",
+      paidOn: "Payé le",
+      reference: "Référence FedaPay",
+    },
     pendingPage: {
       title: "Compte en attente d'activation",
       text: "Votre admin doit d'abord régler la création de votre compte. Vous pourrez vous connecter dès que ce sera fait.",
@@ -119,6 +129,16 @@ export const billing = pair(
       unknownText: "We cannot find this payment on your account.",
       error: "Could not verify",
       errorText: "We could not reach FedaPay. Please try again in a moment: nothing is created until the payment is confirmed.",
+    },
+    recap: {
+      title: "Recap",
+      client: "Client",
+      email: "E-mail",
+      status: "Status",
+      active: "Active account",
+      amount: "Amount paid",
+      paidOn: "Paid on",
+      reference: "FedaPay reference",
     },
     pendingPage: {
       title: "Account awaiting activation",

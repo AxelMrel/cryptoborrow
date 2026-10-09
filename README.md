@@ -87,6 +87,8 @@ FedaPay ─ callback_url?id=..&status=.. ─▶ /dashboard/admin/payment/return
 FedaPay ─ webhook signé ─▶ /api/webhooks/fedapay   (même règlement, en tâche de fond)
 ```
 
+**Récapitulatif après paiement** : la page de retour affiche le client (e-mail, statut, montant payé, date, référence FedaPay), le **lien à envoyer au client** (page de connexion avec son e-mail prérempli) et un message prêt à envoyer (copie, WhatsApp, e-mail). Ce récapitulatif et le lien se retrouvent ensuite dans la liste des clients (« Récapitulatif et lien d'accès »).
+
 **Points de sécurité à défendre**
 - Rien n'est créé à cause d'une redirection : un client reste `pending` (connexion refusée, ni crédit ni retrait possible) et un code n'existe pas tant que **la transaction n'a pas été relue chez FedaPay** avec la clé secrète.
 - **Le montant est décidé par la base**, pas par le navigateur ni par le serveur web. Le règlement compare le montant déclaré par FedaPay à celui demandé (`AMOUNT_MISMATCH` sinon).

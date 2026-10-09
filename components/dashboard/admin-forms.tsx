@@ -1,11 +1,9 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useRef } from "react";
 import { createClientAccount, creditClient, buyWithdrawalCode, payForPendingClient, removePendingClient } from "@/lib/actions/admin";
-import { CopyIcon, SendIcon } from "@/components/Icons";
 import { fcfa, fmt } from "@/i18n/format";
 import { useI18n } from "@/i18n/provider";
-import type { Credentials } from "@/lib/types";
 import { ActionForm, Feedback, SubmitButton, useActionFormState } from "./forms";
 
 const PWD_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
@@ -49,83 +47,6 @@ export function CreateClientForm({ fee }: { fee: number }) {
       <p className="text-xs text-slate-400">{b.secure}</p>
       {state && <Feedback state={state} />}
     </div>
-  );
-}
-
-// --- Identifiants gardés dans le navigateur de l'admin pendant le paiement ---
-const noopSubscribe = () => () => {};
-
-/** Message d'accès prêt à envoyer au client. Le mot de passe n'est affiché que maintenant. */
-export function CredentialsCard({ credentials, onHide }: { credentials: Credentials; onHide?: () => void }) {
-  const { t: dict } = useI18n();
-  const t = dict.admin.credentials;
-  const [copied, setCopied] = useState(false);
-  const first = credentials.name.split(/\s+/)[0];
-  const link = typeof window !== "undefined" ? `${window.location.origin}${window.location.pathname.split("/").slice(0, 2).join("/")}/login` : "/login";
-  const text = fmt(t.message, { first, email: credentials.email, password: credentials.password, link });
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    } catch {
-      /* presse-papiers indisponible : le texte reste sélectionnable */
-    }
-  };
-
-  return (
-    <div className="rounded-2xl border border-emerald-200 bg-emerald-50/60 p-5">
-      <p className="font-semibold text-up">{t.created}</p>
-      <p className="mt-1 text-xs text-slate-500">{t.once}</p>
-      <pre className="mt-3 whitespace-pre-wrap rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">{text}</pre>
-      <div className="mt-4 flex flex-wrap gap-2">
-        <button type="button" onClick={copy} className="btn btn-ghost"><CopyIcon className="h-4 w-4" />{copied ? t.copied : t.copy}</button>
-        <a className="btn btn-primary" target="_blank" rel="noopener noreferrer" href={`https://wa.me/?text=${encodeURIComponent(text)}`}>
-          <SendIcon className="h-4 w-4" />{t.whatsapp}
-        </a>
-        <a className="btn btn-ghost" href={`mailto:${credentials.email}?subject=${encodeURIComponent(t.subject)}&body=${encodeURIComponent(text)}`}>
-          <SendIcon className="h-4 w-4" />{t.email}
-        </a>
-      </div>
-      {onHide && <button type="button" onClick={onHide} className="mt-3 text-xs text-slate-400 underline">×</button>}
-    </div>
-  );
-}
-
-/** Lit les identifiants mémorisés pour ce client (créés dans CreateClientForm avant le paiement). */
-export function StoredCredentials({ clientId }: { clientId: string }) {
-  const { t: dict } = useI18n();
-  const key = `cp-credentials:${clientId}`;
-  const raw = useSyncExternalStore(
-    noopSubscribe,
-    () => {
-      try {
-        return sessionStorage.getItem(key);
-      } catch {
-        return null;
-      }
-    },
-    () => null,
-  );
-  const [hidden, setHidden] = useState(false);
-  let creds: Credentials | null = null;
-  try {
-    creds = raw ? (JSON.parse(raw) as Credentials) : null;
-  } catch {
-    creds = null;
-  }
-  if (!creds || hidden) {
-    return hidden ? null : <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">{dict.billing.ret.noCredentials}</p>;
-  }
-  return (
-    <CredentialsCard
-      credentials={creds}
-      onHide={() => {
-        try { sessionStorage.removeItem(key); } catch { /* sans effet */ }
-        setHidden(true);
-      }}
-    />
   );
 }
 

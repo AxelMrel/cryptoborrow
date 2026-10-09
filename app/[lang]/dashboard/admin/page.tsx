@@ -1,6 +1,8 @@
 import { requireRole } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
 import { getFees } from "@/lib/fees";
+import { clientAccessLink } from "@/lib/site";
+import { AccessCard } from "@/components/dashboard/AccessCard";
 import { codeStatus, dateTime, fcfa, fmt, money } from "@/i18n/format";
 import { getDictionary, getLocale } from "@/i18n/server";
 import type { Payment, Profile, Transaction, WithdrawalCode } from "@/lib/types";
@@ -40,6 +42,7 @@ export default async function AdminDashboard() {
   const pendingCount = clients.length - active.length;
   const names: Record<string, string> = { [me.id]: me.full_name };
   clients.forEach((c) => (names[c.id] = c.full_name));
+  const links = Object.fromEntries(await Promise.all(active.map(async (c) => [c.id, await clientAccessLink(locale, c.email)] as const)));
   const spent = payments.filter((p) => p.status === "approved").reduce((s, p) => s + Number(p.amount_xof), 0);
   const activeCodes = codes.filter((c) => codeStatus(c) === "active").length;
 
@@ -83,7 +86,15 @@ export default async function AdminDashboard() {
               </div>
               {c.status === "pending"
                 ? <PendingClientActions clientId={c.id} fee={fees.clientCreation} />
-                : <ActiveClientActions clientId={c.id} fee={fees.withdrawalCode} />}
+                : (
+                  <>
+                    <ActiveClientActions clientId={c.id} fee={fees.withdrawalCode} />
+                    <details className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
+                      <summary className="cursor-pointer text-sm font-medium text-brand">{t.access.summary}</summary>
+                      <div className="mt-4"><AccessCard name={c.full_name} email={c.email} link={links[c.id]} /></div>
+                    </details>
+                  </>
+                )}
             </div>
           ))}
         </div>
