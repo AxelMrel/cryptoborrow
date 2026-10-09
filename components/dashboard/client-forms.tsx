@@ -29,8 +29,8 @@ export function WithdrawFlow() {
 
   if (step === 1) {
     return (
-      <div className="space-y-3">
-        <div>
+      <div className="space-y-3 sm:flex sm:items-end sm:gap-3 sm:space-y-0">
+        <div className="sm:flex-1">
           <label className="label" htmlFor="wd-amount">Montant à retirer (FCFA)</label>
           <input
             id="wd-amount" inputMode="numeric" className="input" placeholder="ex. 20000"
@@ -38,7 +38,7 @@ export function WithdrawFlow() {
           />
         </div>
         <button
-          type="button" className="btn btn-ghost w-full" disabled={!/^\d+$/.test(amount.trim()) || Number(amount) <= 0}
+          type="button" className="btn btn-primary w-full sm:w-auto sm:whitespace-nowrap" disabled={!/^\d+$/.test(amount.trim()) || Number(amount) <= 0}
           onClick={() => setStep(2)}
         >
           Demander un retrait
@@ -48,12 +48,12 @@ export function WithdrawFlow() {
   }
 
   return (
-    <form action={formAction} className="space-y-3">
+    <form action={formAction} className="max-w-xl space-y-3">
       <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
         Contactez votre admin pour obtenir un code de retrait.
       </p>
       <input type="hidden" name="amount" value={amount} />
-      <p className="text-sm text-slate-500">Montant demandé : <span className="font-mono text-white">{amount} FCFA</span></p>
+      <p className="text-sm text-slate-500">Montant demandé : <span className="font-mono font-semibold text-ink">{amount} FCFA</span></p>
       <div>
         <label className="label" htmlFor="wd-code">Code de retrait</label>
         <input id="wd-code" name="code" required autoComplete="off" className="input font-mono uppercase tracking-widest" placeholder="ABCD2345" />

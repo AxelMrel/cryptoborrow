@@ -24,21 +24,21 @@ export default async function ClientDashboard() {
   return (
     <>
       <BalanceHero name={me.full_name} balance={me.balance} />
+
+      <div id="retrait" className="scroll-mt-24">
+        <Card title="Retrait"><WithdrawFlow /></Card>
+      </div>
+
       <div className="-mx-4 overflow-hidden border-y border-slate-200 bg-white"><LiveTicker /></div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card title="Évolution de mon solde" className="lg:col-span-2">
-          <TrendArea data={balanceSeries(txs, me.id, me.balance)} empty="Faites un premier dépôt pour voir la courbe de votre solde." />
+          <TrendArea data={balanceSeries(txs, me.id, me.balance)} empty="La courbe de votre solde apparaîtra dès votre premier crédit." />
         </Card>
         <Card title="Mes opérations"><Donut data={typeBreakdown(txs)} /></Card>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="space-y-6">
-          <div id="retrait" className="scroll-mt-24"><Card title="Retrait"><WithdrawFlow /></Card></div>
-        </div>
-        <div className="lg:col-span-2"><MarketPanel /></div>
-      </div>
+      <MarketPanel />
 
       <Card title="Historique des transactions">
         <TransactionsTable txs={txs} names={{ [me.id]: me.full_name }} viewerId={me.id} />
