@@ -1,10 +1,9 @@
 import { requireRole } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
-import { fcfa } from "@/lib/format";
 import { balanceSeries, typeBreakdown } from "@/lib/stats";
 import type { Transaction } from "@/lib/types";
-import { Card, Stat, TransactionsTable } from "@/components/dashboard/ui";
-import Welcome from "@/components/dashboard/Welcome";
+import { Card, TransactionsTable } from "@/components/dashboard/ui";
+import BalanceHero from "@/components/dashboard/BalanceHero";
 import { DepositForm, WithdrawFlow } from "@/components/dashboard/client-forms";
 import MarketPanel from "@/components/charts/MarketPanel";
 import { LiveTicker } from "@/components/charts/LiveTicker";
@@ -26,26 +25,20 @@ export default async function ClientDashboard() {
 
   return (
     <>
-      <Welcome name={me.full_name} subtitle="Suivez votre solde, alimentez votre compte et gardez un œil sur les marchés en direct." />
+      <BalanceHero name={me.full_name} balance={me.balance} received={deposits} withdrawn={withdrawals} />
       <div className="-mx-4 overflow-hidden border-y border-slate-200 bg-white"><LiveTicker /></div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Stat label="Solde disponible" value={fcfa(me.balance)} hint="Solde simulé" />
-        <Stat label="Total reçu" value={fcfa(deposits)} hint="Dépôts et crédits" />
-        <Stat label="Total retiré" value={fcfa(withdrawals)} hint="Retraits validés" />
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card title="Évolution de mon solde" className="lg:col-span-2">
           <TrendArea data={balanceSeries(txs, me.id, me.balance)} empty="Faites un premier dépôt pour voir la courbe de votre solde." />
         </Card>
         <Card title="Mes opérations"><Donut data={typeBreakdown(txs)} /></Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6">
-          <Card title="Dépôt (simulé)"><DepositForm /></Card>
-          <Card title="Retrait (simulé)"><WithdrawFlow /></Card>
+          <div id="depot" className="scroll-mt-24"><Card title="Dépôt (simulé)"><DepositForm /></Card></div>
+          <div id="retrait" className="scroll-mt-24"><Card title="Retrait (simulé)"><WithdrawFlow /></Card></div>
         </div>
         <div className="lg:col-span-2"><MarketPanel /></div>
       </div>
