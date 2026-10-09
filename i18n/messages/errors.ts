@@ -20,6 +20,7 @@ export const errors = pair(
       INVALID_INPUT: "Informations invalides, vérifiez les champs.",
       LIMIT_REACHED: "Vous avez atteint la limite de 5 moyens de paiement. Supprimez-en un pour en ajouter un autre.",
       PLAN_NOT_FOUND: "Ce pack n'existe plus ou n'est plus disponible.",
+      CLIENT_PENDING: "Ce client n'est pas encore activé : son paiement n'est pas confirmé.",
     },
     actions: {
       credsRequired: "Email et mot de passe requis.",
@@ -63,7 +64,10 @@ export const errors = pair(
       pmDefault: "Moyen de paiement par défaut mis à jour.",
       paymentUnavailable: "Le paiement en ligne n'est pas configuré pour le moment.",
       paymentFailed: "Impossible de démarrer le paiement. Réessayez dans un instant.",
-      migration003: "Paiement indisponible : la migration SQL 003 n'a pas encore été exécutée.",
+      migration004: "Fonctionnalité indisponible : la migration SQL 004 n'a pas encore été exécutée.",
+      accountPending: "Votre compte n'est pas encore activé : votre admin doit d'abord régler sa création.",
+      redirectingToPayment: "Redirection vers FedaPay pour le paiement…",
+      pendingRemoved: "Client non payé supprimé.",
     },
   },
   {
@@ -85,6 +89,7 @@ export const errors = pair(
       INVALID_INPUT: "Invalid information, please check the fields.",
       LIMIT_REACHED: "You have reached the limit of 5 payment methods. Delete one to add another.",
       PLAN_NOT_FOUND: "This plan no longer exists or is no longer available.",
+      CLIENT_PENDING: "This client is not activated yet: their payment is not confirmed.",
     },
     actions: {
       credsRequired: "E-mail and password are required.",
@@ -128,7 +133,10 @@ export const errors = pair(
       pmDefault: "Default payment method updated.",
       paymentUnavailable: "Online payment is not configured at the moment.",
       paymentFailed: "Could not start the payment. Please try again in a moment.",
-      migration003: "Payment unavailable: SQL migration 003 has not been run yet.",
+      migration004: "Feature unavailable: SQL migration 004 has not been run yet.",
+      accountPending: "Your account is not activated yet: your admin first has to pay for its creation.",
+      redirectingToPayment: "Redirecting to FedaPay for the payment…",
+      pendingRemoved: "Unpaid client deleted.",
     },
   },
 );

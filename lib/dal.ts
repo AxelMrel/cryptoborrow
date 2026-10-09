@@ -31,6 +31,7 @@ export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
 export async function requireRole(role: Role): Promise<Profile> {
   const [me, locale] = await Promise.all([getCurrentProfile(), getLocale()]);
   if (!me) redirect(withLocale(locale, "/login"));
+  if (me.status === "pending") redirect(withLocale(locale, "/account-pending")); // client pas encore payé par son admin
   if (me.role !== role) redirect(withLocale(locale, HOME[me.role]));
   return me;
 }

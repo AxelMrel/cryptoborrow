@@ -14,7 +14,7 @@ export default async function SiteNav({ audience }: { audience: "client" | "admi
   const menu =
     audience === "client"
       ? { home: "/", links: [{ href: "#acces", label: n.client.access }, { href: "#fonctionnalites", label: n.client.features }, { href: "#marches", label: n.client.markets }] }
-      : { home: "/admin", links: [{ href: "#outils", label: n.admin.tools }, { href: "#etapes", label: n.admin.steps }, { href: "#tarifs", label: n.admin.packs }] };
+      : { home: "/admin", links: [{ href: "#outils", label: n.admin.tools }, { href: "#etapes", label: n.admin.steps }, { href: "#tarifs", label: n.admin.pricing }] };
 
   return (
     <nav className="sticky top-0 z-50 px-3 pt-3 sm:px-4 sm:pt-4">

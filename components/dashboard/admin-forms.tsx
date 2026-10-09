@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { createClientAccount, creditClient, generateWithdrawalCode } from "@/lib/actions/admin";
+import { useRef, useState, useSyncExternalStore } from "react";
+import { createClientAccount, creditClient, buyWithdrawalCode, payForPendingClient, removePendingClient } from "@/lib/actions/admin";
 import { CopyIcon, SendIcon } from "@/components/Icons";
-import { fmt, num } from "@/i18n/format";
+import { fcfa, fmt } from "@/i18n/format";
 import { useI18n } from "@/i18n/provider";
 import type { Credentials } from "@/lib/types";
 import { ActionForm, Feedback, SubmitButton, useActionFormState } from "./forms";
@@ -14,14 +14,16 @@ function randomPassword(len = 12) {
   return Array.from(bytes, (n) => PWD_ALPHABET[n % PWD_ALPHABET.length]).join("");
 }
 
-/** Création d'un client + remise de ses coordonnées (copie, WhatsApp, e-mail). */
-export function CreateClientForm() {
-  const { t: dict } = useI18n();
+/** Création d'un client : payante. Après validation, l'admin est redirigé vers la page de paiement FedaPay. */
+export function CreateClientForm({ fee }: { fee: number }) {
+  const { locale, t: dict } = useI18n();
   const t = dict.admin.form;
+  const b = dict.billing;
   const [state, formAction, formRef] = useActionFormState(createClientAccount);
   const pass = useRef<HTMLInputElement>(null);
   return (
     <div className="space-y-4">
+      <p className="text-sm text-slate-500">{b.createClient.explain}</p>
       <form ref={formRef} action={formAction} className="grid gap-3 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="c-name">{t.fullName}</label>
@@ -41,17 +43,20 @@ export function CreateClientForm() {
           </div>
         </div>
         <div className="flex items-end">
-          <SubmitButton className="btn btn-primary w-full">{t.create}</SubmitButton>
+          <SubmitButton className="btn btn-primary w-full">{fmt(b.createClient.submit, { fee: fcfa(fee, locale) })}</SubmitButton>
         </div>
       </form>
-      {state && !state.ok && <Feedback state={state} />}
-      {state?.ok && state.credentials && <CredentialsCard key={state.credentials.email} credentials={state.credentials} />}
+      <p className="text-xs text-slate-400">{b.secure}</p>
+      {state && <Feedback state={state} />}
     </div>
   );
 }
 
+// --- Identifiants gardés dans le navigateur de l'admin pendant le paiement ---
+const noopSubscribe = () => () => {};
+
 /** Message d'accès prêt à envoyer au client. Le mot de passe n'est affiché que maintenant. */
-function CredentialsCard({ credentials }: { credentials: Credentials }) {
+export function CredentialsCard({ credentials, onHide }: { credentials: Credentials; onHide?: () => void }) {
   const { t: dict } = useI18n();
   const t = dict.admin.credentials;
   const [copied, setCopied] = useState(false);
@@ -83,14 +88,52 @@ function CredentialsCard({ credentials }: { credentials: Credentials }) {
           <SendIcon className="h-4 w-4" />{t.email}
         </a>
       </div>
+      {onHide && <button type="button" onClick={onHide} className="mt-3 text-xs text-slate-400 underline">×</button>}
     </div>
   );
 }
 
-/** Actions d'un client : créditer son compte / générer un code de retrait. */
-export function ClientActions({ clientId, fee }: { clientId: string; fee: number }) {
+/** Lit les identifiants mémorisés pour ce client (créés dans CreateClientForm avant le paiement). */
+export function StoredCredentials({ clientId }: { clientId: string }) {
+  const { t: dict } = useI18n();
+  const key = `cp-credentials:${clientId}`;
+  const raw = useSyncExternalStore(
+    noopSubscribe,
+    () => {
+      try {
+        return sessionStorage.getItem(key);
+      } catch {
+        return null;
+      }
+    },
+    () => null,
+  );
+  const [hidden, setHidden] = useState(false);
+  let creds: Credentials | null = null;
+  try {
+    creds = raw ? (JSON.parse(raw) as Credentials) : null;
+  } catch {
+    creds = null;
+  }
+  if (!creds || hidden) {
+    return hidden ? null : <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">{dict.billing.ret.noCredentials}</p>;
+  }
+  return (
+    <CredentialsCard
+      credentials={creds}
+      onHide={() => {
+        try { sessionStorage.removeItem(key); } catch { /* sans effet */ }
+        setHidden(true);
+      }}
+    />
+  );
+}
+
+/** Actions d'un client ACTIF : créditer son compte (gratuit) / acheter un code de retrait. */
+export function ActiveClientActions({ clientId, fee }: { clientId: string; fee: number }) {
   const { locale, t: dict } = useI18n();
   const t = dict.admin.clientActions;
+  const c = dict.billing.code;
   return (
     <div className="mt-4 grid gap-4 border-t border-slate-200 pt-4 md:grid-cols-2">
       <ActionForm action={creditClient} className="space-y-2">
@@ -101,14 +144,35 @@ export function ClientActions({ clientId, fee }: { clientId: string; fee: number
           <SubmitButton className="btn btn-ghost whitespace-nowrap">{t.credit}</SubmitButton>
         </div>
       </ActionForm>
-      <ActionForm action={generateWithdrawalCode} className="space-y-2">
+      <ActionForm action={buyWithdrawalCode} className="space-y-2">
         <input type="hidden" name="client_id" value={clientId} />
-        <label className="label" htmlFor={`wc-${clientId}`}>{fmt(t.codeLabel, { fee: num(fee, locale) })}</label>
+        <label className="label" htmlFor={`wc-${clientId}`}>{fmt(c.label, { fee: fcfa(fee, locale) })}</label>
         <div className="flex gap-2">
-          <input id={`wc-${clientId}`} name="amount" inputMode="numeric" className="input" placeholder={t.codePlaceholder} />
-          <SubmitButton className="btn btn-primary whitespace-nowrap">{t.generate}</SubmitButton>
+          <input id={`wc-${clientId}`} name="amount" inputMode="numeric" className="input" placeholder={c.placeholder} />
+          <SubmitButton className="btn btn-primary whitespace-nowrap">{fmt(c.buy, { fee: fcfa(fee, locale) })}</SubmitButton>
         </div>
       </ActionForm>
+    </div>
+  );
+}
+
+/** Client en attente de paiement : relancer le paiement ou supprimer le compte jamais payé. */
+export function PendingClientActions({ clientId, fee }: { clientId: string; fee: number }) {
+  const { locale, t: dict } = useI18n();
+  const t = dict.billing.pending;
+  return (
+    <div className="mt-4 border-t border-slate-200 pt-4">
+      <p className="mb-3 text-sm text-amber-800">{fmt(t.text, { fee: fcfa(fee, locale) })}</p>
+      <div className="flex flex-wrap gap-2">
+        <ActionForm action={payForPendingClient}>
+          <input type="hidden" name="client_id" value={clientId} />
+          <SubmitButton className="btn btn-primary !py-2">{fmt(t.pay, { fee: fcfa(fee, locale) })}</SubmitButton>
+        </ActionForm>
+        <ActionForm action={removePendingClient}>
+          <input type="hidden" name="client_id" value={clientId} />
+          <SubmitButton className="btn btn-ghost !py-2 !text-down">{t.remove}</SubmitButton>
+        </ActionForm>
+      </div>
     </div>
   );
 }

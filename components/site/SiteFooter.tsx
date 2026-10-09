@@ -21,7 +21,7 @@ export default async function SiteFooter({ audience }: { audience: "client" | "a
           home: "/admin",
           blurb: f.adminBlurb,
           columns: [
-            { title: f.adminArea, links: [{ href: "#outils", label: f.tools }, { href: "#etapes", label: f.steps }, { href: "#tarifs", label: f.packs }] },
+            { title: f.adminArea, links: [{ href: "#outils", label: f.tools }, { href: "#etapes", label: f.steps }, { href: "#tarifs", label: f.pricing }] },
             { title: f.myAccount, links: [{ href: "/signup", label: f.becomeAdmin }, { href: "/login", label: f.signIn }] },
           ],
         };

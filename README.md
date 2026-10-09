@@ -17,12 +17,13 @@ cp .env.example .env.local        # puis renseigner les 3 clés Supabase
 1. Créer un projet sur [supabase.com](https://supabase.com).
 2. **SQL Editor** → coller et exécuter [`supabase/schema.sql`](supabase/schema.sql) (tables, RLS, fonctions RPC, tarifs).
    puis [`supabase/002_profile_payment.sql`](supabase/002_profile_payment.sql) (téléphone du profil et moyens de paiement du client)
-   puis [`supabase/003_payments.sql`](supabase/003_payments.sql) (paiements FedaPay : table `payments` et règlement atomique).
+   puis [`supabase/003_payments.sql`](supabase/003_payments.sql) (table `payments`, étape intermédiaire)
+   puis [`supabase/004_pay_per_use.sql`](supabase/004_pay_per_use.sql) (tarification à l'usage : clients en attente, paiements par opération, code généré en base).
 3. Renseigner `.env.local` (Project Settings → API) ; définir aussi `SEED_SUPER_ADMIN_*`.
 4. Créer le super admin de départ : `npm run seed:super-admin`
 5. `npm run dev` → <http://localhost:3000> → *Connexion*.
 
-Parcours de démonstration : un futur admin choisit un pack sur la landing (`/signup`) et reçoit ses crédits + son quota automatiquement → l'admin crée un client et le crédite (le client qui veut déposer est invité, par une fenêtre modale, à contacter son admin) → l'admin génère un code (5 000 crédits) → le client retire avec ce code.
+Parcours de démonstration : un admin s'inscrit gratuitement (`/admin` puis `/signup`) → il crée un client et paie 5 000 FCFA via FedaPay (le client est activé à la confirmation) → il le crédite (gratuit) → il paie 1 000 FCFA pour générer un code de retrait → le client retire avec ce code. Le client qui veut déposer est invité, par une fenêtre modale, à contacter son admin.
 
 ## 2. Architecture
 
@@ -31,10 +32,10 @@ proxy.ts                     Langue (redirige / vers /fr ou /en) + protection de
 i18n/                        Internationalisation FR / EN : config, formatage (euros, dates), dictionnaires par thème (messages/)
 app/[lang]/                  Toutes les routes sont préfixées par la langue : /fr/... et /en/...
   page.tsx                   Landing CLIENT (accueil) : aucun lien vers l'espace admin
-  admin/page.tsx             Landing ADMIN, adresse communiquée aux admins (outils, packs, inscription)
+  admin/page.tsx             Landing ADMIN, adresse communiquée aux admins (outils, tarifs, inscription gratuite)
   dashboard/client/profile/          Profil du client (nom, téléphone, mot de passe)
   dashboard/client/payment-methods/  Moyens de paiement du client (4 derniers chiffres uniquement)
-  signup/page.tsx            Inscription d'un admin par achat d'un pack
+  signup/page.tsx            Inscription gratuite d'un admin
   login/page.tsx             Connexion email + mot de passe
   dashboard/
     layout.tsx               En-tête + <Suspense> (Cache Components)
@@ -54,48 +55,53 @@ supabase/schema.sql          Schéma complet + RLS + RPC
 scripts/seed-super-admin.mjs Création du super admin
 ```
 
-### Flux d'une opération (exemple : génération d'un code de retrait)
+### Flux d'une opération (exemple : un admin crédite un client)
 
 ```
-Navigateur ──form──▶ Server Action generateWithdrawalCode
+Navigateur ──form──▶ Server Action creditClient
                        1. guard("admin")        rôle vérifié côté serveur (session Supabase)
                        2. validation des entrées (uuid, montant)
-                       3. code aléatoire crypto (node:crypto randomInt, 8 car.)
-                       4. rpc_generate_withdrawal_code  (clé service_role)
-                              └─ SQL atomique : verrou admin FOR UPDATE, client ∈ ses clients ?,
-                                 crédits ≥ frais (table settings) ?, débit, transaction admin_fee, insert code
+                       3. rpc_admin_credit_client  (clé service_role)
+                              └─ SQL atomique : le client appartient-il à cet admin ET est-il actif ?
+                                 crédit du solde + ligne dans transactions, dans la même transaction SQL
 ```
 
-### Paiement des crédits avec FedaPay (sandbox)
+### Paiements à l'usage avec FedaPay (sandbox)
 
-Les admins achètent leurs crédits via **FedaPay**, un agrégateur de paiement (mobile money et cartes en Afrique de l'Ouest).
+Il n'y a **ni pack, ni abonnement, ni crédits** : l'inscription d'un admin est **gratuite**, puis il paie via **FedaPay** (agrégateur : mobile money et cartes en Afrique de l'Ouest) :
+
+| Opération | Tarif (modifiable par le super admin) | Effet après paiement confirmé |
+|---|---|---|
+| Créer un client | 5 000 FCFA | le client passe de `pending` à `active` et peut se connecter |
+| Générer un code de retrait | 1 000 FCFA | la base génère le code (aléatoire, usage unique, expirant) |
 
 ```
-Admin ─ choisit un pack ─▶ Server Action startCheckout
-                              1. enregistre un paiement "pending" (rpc_create_payment)
-                              2. POST /v1/transactions            (FedaPay, clé secrète, montant en XOF)
-                              3. POST /v1/transactions/{id}/token (lien de la page de paiement)
-                              4. redirect ─▶ page de paiement hébergée par FedaPay (mobile money / carte)
+Admin ─ remplit le formulaire ─▶ Server Action
+          1. crée le client en statut "pending" (ou ouvre l'achat d'un code)
+          2. rpc_create_fee_payment : la BASE fixe le montant (table settings)
+          3. POST /v1/transactions + /token (FedaPay, clé secrète, XOF)
+          4. redirect ─▶ page de paiement hébergée par FedaPay
 FedaPay ─ callback_url?id=..&status=.. ─▶ /dashboard/admin/payment/return
-                              5. relit GET /v1/transactions/{id} chez FedaPay  (on ignore ?status=)
-                              6. rpc_settle_payment : crédite UNE seule fois, vérifie le montant
+          5. relit GET /v1/transactions/{id} chez FedaPay  (on ignore ?status=)
+          6. rpc_settle_payment : active le client / génère le code, UNE seule fois
 FedaPay ─ webhook signé ─▶ /api/webhooks/fedapay   (même règlement, en tâche de fond)
 ```
 
 **Points de sécurité à défendre**
-- Les crédits ne sont jamais accordés à cause d'une redirection : la page de retour et le webhook **relisent la transaction chez FedaPay** avec la clé secrète avant de régler.
-- Le règlement est **atomique et idempotent** (`SELECT … FOR UPDATE`) : le retour navigateur et le webhook peuvent arriver tous les deux, ou être rejoués, sans jamais créditer deux fois.
-- Le montant renvoyé par FedaPay doit **égaler** celui demandé, sinon refus (`AMOUNT_MISMATCH`).
-- Le webhook vérifie la signature `X-FEDAPAY-SIGNATURE` (HMAC-SHA256 de `horodatage.corps`, tolérance 5 min, comparaison à temps constant).
+- Rien n'est créé à cause d'une redirection : un client reste `pending` (connexion refusée, ni crédit ni retrait possible) et un code n'existe pas tant que **la transaction n'a pas été relue chez FedaPay** avec la clé secrète.
+- **Le montant est décidé par la base**, pas par le navigateur ni par le serveur web. Le règlement compare le montant déclaré par FedaPay à celui demandé (`AMOUNT_MISMATCH` sinon).
+- Règlement **atomique et idempotent** (`SELECT … FOR UPDATE`) : retour navigateur et webhook peuvent arriver ensemble ou être rejoués sans effet double (un seul code, un seul passage à `active`).
+- Le mot de passe d'un client n'est **jamais stocké en clair** : il n'existe que dans le navigateur de l'admin (sessionStorage) le temps du paiement, puis haché par Supabase Auth.
+- Webhook : signature `X-FEDAPAY-SIGNATURE` (HMAC-SHA256 de `horodatage.corps`, tolérance 5 min, comparaison à temps constant).
 - `FEDAPAY_SECRET_KEY` et `FEDAPAY_WEBHOOK_SECRET` ne sont lues que côté serveur.
 
-**Devise** : FedaPay ne facture qu'en francs CFA (XOF). Les prix des packs sont en euros et convertis à la parité officielle 1 € = 655,957 XOF (arrondi au franc supérieur).
+**Devise** : FedaPay ne facture qu'en francs CFA (XOF). Les frais sont donc affichés et facturés en FCFA ; les soldes des clients restent en euros.
 
 **Configuration (sandbox)**
-1. Créer un compte sur [sandbox.fedapay.com](https://sandbox.fedapay.com), récupérer la clé secrète (Paramètres, Clés API).
-2. Renseigner `FEDAPAY_ENV=sandbox`, `FEDAPAY_SECRET_KEY` et `NEXT_PUBLIC_SITE_URL` dans `.env`.
-3. Webhook (optionnel en local, utile une fois déployé) : dans FedaPay, ajouter l'endpoint `https://<votre-domaine>/api/webhooks/fedapay` (événements `transaction.*`), puis copier son secret dans `FEDAPAY_WEBHOOK_SECRET`. En local, la page de retour suffit : elle règle le paiement elle-même.
-4. Passage en production : `FEDAPAY_ENV=live` avec la clé secrète live.
+1. Compte sur [sandbox.fedapay.com](https://sandbox.fedapay.com), clé secrète (Paramètres, Clés API).
+2. Dans `.env` : `FEDAPAY_ENV=sandbox`, `FEDAPAY_SECRET_KEY`, `NEXT_PUBLIC_SITE_URL`.
+3. Webhook (utile une fois déployé) : endpoint `https://<votre-domaine>/api/webhooks/fedapay` (événements `transaction.*`), puis son secret dans `FEDAPAY_WEBHOOK_SECRET`. En local, la page de retour règle le paiement elle-même.
+4. Production : `FEDAPAY_ENV=live` avec la clé secrète live.
 
 ### Langues (français et anglais)
 
@@ -115,18 +121,14 @@ FedaPay ─ webhook signé ─▶ /api/webhooks/fedapay   (même règlement, en 
 | Contournement par l'UI | Chaque Server Action revérifie le rôle (`guard`) ; les RPC revérifient aussi le rôle en SQL (défense en profondeur) ; le proxy n'est qu'un contrôle optimiste. |
 | Double clic / requêtes concurrentes | Boutons désactivés (`useFormStatus`) **et** verrous `SELECT … FOR UPDATE` dans les RPC ; `CHECK (balance >= 0)` empêche tout solde négatif. |
 | Code de retrait volé / rejoué | Aléatoire cryptographique, lié à **un client**, **usage unique**, **expiration** (réglable), validé et consommé **dans la même transaction SQL** que le débit. Le client **n'a pas le droit de lire** la table des codes (sinon il se servirait seul). |
-| Dépassement de quota | `rpc_create_client` verrouille la ligne de l'admin puis compte les clients : pas de course entre deux créations simultanées. Si la RPC échoue, l'utilisateur Auth créé est supprimé. |
-| Création de comptes | Pas d'inscription publique de clients ; l'inscription admin passe par un pack et une Server Action. `auth.admin.createUser` appelé côté serveur uniquement. |
+| Création de comptes | Pas d'inscription publique de clients ; l'inscription admin (gratuite) passe par une Server Action. `auth.admin.createUser` appelé côté serveur uniquement. |
 
 ## 4. Règles métier (choix de conception à connaître)
 
-- **Les admins s'inscrivent eux-mêmes** depuis les cartes de pricing de la landing : choix d'un pack → compte créé, crédits et quota attribués, connexion automatique. Les packs sont définis dans `lib/plans.ts`. Le **super admin ne crée plus d'admins** ; il ajuste crédits/quotas, tarifs et supervise. Aucun paiement réel n'est débité : n'importe qui peut donc s'offrir des crédits (acceptable ici ; un vrai produit brancherait un prestataire de paiement et ajouterait un anti-abus).
-- **L'admin crée ses clients et leur transmet leurs accès** : après création, il obtient un message prêt à envoyer (e-mail, mot de passe, lien de connexion) avec les boutons Copier, WhatsApp et E-mail. Le mot de passe n'est affiché qu'une fois. Aucun e-mail n'est envoyé automatiquement par le serveur (pas de fournisseur d'envoi configuré).
-- **Admin sans crédits (`credits = 0`) → espace verrouillé** (il ne peut ni créer de client, ni créditer, ni générer de code).
-- **Créditer un client ne consomme pas les crédits de l'admin** ; seuls les **codes de retrait** coûtent des crédits (5 000 par défaut, modifiable par le super admin dans `settings`). Le sujet ne précisait pas ce point — c'est un paramétrage simple à changer dans `rpc_admin_credit_client`.
+- **L'inscription d'un admin est gratuite et immédiate.** Il ne paie que pour **créer un client** (5 000 FCFA) et **générer un code de retrait** (1 000 FCFA). Créditer un client est gratuit.
+- **L'admin crée ses clients et leur transmet leurs accès** : après le paiement, il obtient un message prêt à envoyer (e-mail, mot de passe, lien) avec Copier, WhatsApp et E-mail. Le mot de passe n'est affiché qu'une fois.
 - Un code peut avoir un **montant optionnel** : s'il est défini, le retrait doit être exactement de ce montant.
 - Solde insuffisant au retrait ⇒ refus **sans consommer** le code.
-- Le quota ne peut pas être fixé en dessous du nombre de clients déjà créés.
 
 ## 5. Données de marché temps réel
 
@@ -154,7 +156,8 @@ Si Binance est bloqué sur votre réseau (certains pays/entreprises), les graphe
 
 | Clé | Défaut | Rôle |
 |---|---|---|
-| `withdrawal_code_fee` | 5000 | Crédits débités à l'admin par code |
+| `client_creation_fee_xof` | 5000 | Frais (FCFA) payés par l'admin pour créer un client |
+| `withdrawal_code_fee_xof` | 1000 | Frais (FCFA) payés par l'admin pour générer un code |
 | `withdrawal_code_ttl_minutes` | 60 | Durée de validité d'un code |
 | `max_operation_amount` | 10 000 000 | Garde-fou par opération |
 

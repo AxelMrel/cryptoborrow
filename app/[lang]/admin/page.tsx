@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import SiteNav from "@/components/site/SiteNav";
 import SiteFooter from "@/components/site/SiteFooter";
-import PricingCards from "@/components/PricingCards";
+import FeeCards from "@/components/site/FeeCards";
 import { ChartIcon, CoinsIcon, IconBadge, KeyIcon, SendIcon, UsersIcon } from "@/components/Icons";
 import { withLocale } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/server";
@@ -39,7 +39,7 @@ export default async function AdminLanding() {
             </p>
             <div className="animate-fade-up mt-8 flex flex-col gap-3 [animation-delay:300ms] sm:flex-row">
               <Link href={signup} className="btn btn-primary !px-7 !py-3 text-base">{t.becomeAdmin}</Link>
-              <a href="#tarifs" className="btn btn-ghost !px-7 !py-3 text-base">{t.seePacks}</a>
+              <a href="#tarifs" className="btn btn-ghost !px-7 !py-3 text-base">{t.seePricing}</a>
             </div>
             <p className="animate-fade-up mt-6 text-sm text-slate-500 [animation-delay:400ms]">
               {t.alreadyAdmin} <Link href={login} className="font-medium text-brand hover:underline">{t.signInLink}</Link>.
@@ -95,9 +95,9 @@ export default async function AdminLanding() {
       </section>
 
       <section id="tarifs" className="scroll-mt-24 bg-surface px-4 py-20">
-        <h2 className="text-center text-3xl font-semibold sm:text-4xl">{t.packs.title}<span className="text-brand">{t.packs.titleHl}</span></h2>
-        <p className="mx-auto mb-14 mt-3 max-w-xl text-center text-slate-500">{t.packs.subtitle}</p>
-        <PricingCards />
+        <h2 className="text-center text-3xl font-semibold sm:text-4xl">{t.pricing.title}<span className="text-brand">{t.pricing.titleHl}</span></h2>
+        <p className="mx-auto mb-14 mt-3 max-w-xl text-center text-slate-500">{t.pricing.subtitle}</p>
+        <FeeCards />
       </section>
 
       <section className="px-4 py-20">

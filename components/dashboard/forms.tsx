@@ -64,6 +64,20 @@ export function useActionFormState(action: Action) {
     }
   }, [state]);
 
+  // Action qui renvoie une adresse de paiement : on garde les identifiants du client le temps du paiement
+  // (sessionStorage du navigateur de l'admin, jamais stockés en clair côté serveur), puis on part chez FedaPay.
+  useEffect(() => {
+    if (!state?.ok || !state.redirectTo) return;
+    if (state.credentials) {
+      try {
+        sessionStorage.setItem(`cp-credentials:${state.credentials.clientId}`, JSON.stringify(state.credentials));
+      } catch {
+        /* stockage indisponible : l'admin devra communiquer le mot de passe lui-même */
+      }
+    }
+    window.location.assign(state.redirectTo);
+  }, [state]);
+
   return [state, formAction, formRef] as const;
 }
 

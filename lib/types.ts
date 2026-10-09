@@ -10,6 +10,7 @@ export type Profile = {
   credits: number;
   max_clients: number;
   phone?: string | null;
+  status: "active" | "pending";
   created_at: string;
 };
 
@@ -48,29 +49,21 @@ export type WithdrawalCode = {
   created_at: string;
 };
 
-export type Plan = {
-  id: string;
-  name: string;
-  price: number;
-  credits: number;
-  max_clients: number;
-  highlight: boolean;
-};
+export type Credentials = { clientId: string; name: string; email: string; password: string };
 
-export type Credentials = { name: string; email: string; password: string };
+export type PaymentKind = "client_creation" | "withdrawal_code" | "pack";
 
 export type Payment = {
   id: string;
   user_id: string;
-  plan_id: string;
-  amount_eur: number;
+  kind: PaymentKind;
   amount_xof: number;
-  credits: number;
-  max_clients: number;
+  target_client_id: string | null;
+  code_amount: number | null;
   fedapay_id: number | null;
   status: "pending" | "approved" | "declined" | "canceled";
   created_at: string;
   paid_at: string | null;
 };
 
-export type ActionState = { ok: boolean; message: string; credentials?: Credentials } | null;
+export type ActionState = { ok: boolean; message: string; credentials?: Credentials; redirectTo?: string } | null;

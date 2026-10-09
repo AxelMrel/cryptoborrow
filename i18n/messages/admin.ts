@@ -1,23 +1,17 @@
 import { pair } from "./_pair";
 
-/** Espace admin : tableau de bord, création de clients, remise des accès, codes de retrait. */
+/** Espace admin : tableau de bord, création de clients (payante), remise des accès, codes de retrait (payants). */
 export const admin = pair(
   {
     meta: "Espace admin | CoinPulse",
-    welcome: "Gérez vos clients, créditez leurs comptes et générez leurs codes de retrait.",
-    locked: {
-      title: "Espace verrouillé",
-      text: "Votre solde est de 0 crédit : votre espace est verrouillé tant que vous n'avez pas de crédits.",
-    },
+    welcome: "Créez vos clients, créditez leurs comptes et générez leurs codes de retrait.",
     stats: {
-      credits: "Crédits",
-      creditsValue: "{n} crédits",
-      codeCost: "Un code de retrait coûte {fee} crédits",
-      quota: "Clients / quota",
-      quotaFull: "Quota atteint",
-      placesLeft: "Places restantes : {n}",
+      clients: "Clients actifs",
+      pending: "{n} en attente de paiement",
       codes: "Codes générés",
       activeCodes: "{n} actif(s)",
+      spent: "Frais payés",
+      spentHint: "Total réglé via FedaPay",
     },
     cards: {
       flows: "Flux de mes clients (14 jours)",
@@ -25,12 +19,11 @@ export const admin = pair(
       balances: "Soldes de mes clients",
       balancesEmpty: "Créez votre premier client pour voir ses soldes.",
       create: "Créer un client",
-      quotaFullText: "Quota atteint : demandez au super admin d'augmenter votre limite.",
       myClients: "Mes clients ({n})",
       noClients: "Aucun client pour le moment.",
       codes: "Codes de retrait générés",
       noCodes: "Aucun code généré.",
-      transactions: "Transactions (mes clients et mes crédits)",
+      transactions: "Transactions de mes clients",
     },
     codeHead: ["Créé le", "Client", "Code", "Montant", "Expire", "Statut"],
     form: {
@@ -38,10 +31,9 @@ export const admin = pair(
       clientEmail: "E-mail du client",
       initialPassword: "Mot de passe initial (8 caractères minimum)",
       generate: "Générer",
-      create: "Créer le client",
     },
     credentials: {
-      created: "Client créé. Envoyez-lui ses accès.",
+      created: "Client activé. Envoyez-lui ses accès.",
       once: "Le mot de passe n'est affiché qu'ici, une seule fois.",
       message: "Bonjour {first}, votre compte CoinPulse est prêt.\n\nE-mail : {email}\nMot de passe : {password}\nConnexion : {link}\n\nGardez ces informations pour vous.",
       copy: "Copier le message",
@@ -51,30 +43,22 @@ export const admin = pair(
       subject: "Vos accès CoinPulse",
     },
     clientActions: {
-      creditLabel: "Créditer le compte (€)",
-      creditPlaceholder: "ex. 100000",
+      active: "Actif",
+      creditLabel: "Créditer le compte (€) : gratuit",
+      creditPlaceholder: "ex. 100",
       credit: "Créditer",
-      codeLabel: "Code de retrait, coûte {fee} crédits (montant optionnel)",
-      codePlaceholder: "Montant (optionnel)",
-      generate: "Générer",
     },
   },
   {
     meta: "Admin area | CoinPulse",
-    welcome: "Manage your clients, credit their accounts and generate their withdrawal codes.",
-    locked: {
-      title: "Workspace locked",
-      text: "Your balance is 0 credits: your workspace stays locked until you have credits.",
-    },
+    welcome: "Create your clients, credit their accounts and generate their withdrawal codes.",
     stats: {
-      credits: "Credits",
-      creditsValue: "{n} credits",
-      codeCost: "A withdrawal code costs {fee} credits",
-      quota: "Clients / quota",
-      quotaFull: "Quota reached",
-      placesLeft: "Places left: {n}",
+      clients: "Active clients",
+      pending: "{n} awaiting payment",
       codes: "Codes generated",
       activeCodes: "{n} active",
+      spent: "Fees paid",
+      spentHint: "Total paid via FedaPay",
     },
     cards: {
       flows: "My clients' flows (14 days)",
@@ -82,12 +66,11 @@ export const admin = pair(
       balances: "My clients' balances",
       balancesEmpty: "Create your first client to see their balances.",
       create: "Create a client",
-      quotaFullText: "Quota reached: ask the super admin to raise your limit.",
       myClients: "My clients ({n})",
       noClients: "No clients yet.",
       codes: "Withdrawal codes generated",
       noCodes: "No codes generated.",
-      transactions: "Transactions (my clients and my credits)",
+      transactions: "My clients' transactions",
     },
     codeHead: ["Created", "Client", "Code", "Amount", "Expires", "Status"],
     form: {
@@ -95,10 +78,9 @@ export const admin = pair(
       clientEmail: "Client e-mail",
       initialPassword: "Initial password (8 characters minimum)",
       generate: "Generate",
-      create: "Create client",
     },
     credentials: {
-      created: "Client created. Send them their credentials.",
+      created: "Client activated. Send them their credentials.",
       once: "The password is only shown here, once.",
       message: "Hello {first}, your CoinPulse account is ready.\n\nE-mail: {email}\nPassword: {password}\nSign in: {link}\n\nPlease keep this information private.",
       copy: "Copy message",
@@ -108,12 +90,10 @@ export const admin = pair(
       subject: "Your CoinPulse credentials",
     },
     clientActions: {
-      creditLabel: "Credit the account (€)",
-      creditPlaceholder: "e.g. 100000",
+      active: "Active",
+      creditLabel: "Credit the account (€): free",
+      creditPlaceholder: "e.g. 100",
       credit: "Credit",
-      codeLabel: "Withdrawal code, costs {fee} credits (optional amount)",
-      codePlaceholder: "Amount (optional)",
-      generate: "Generate",
     },
   },
 );

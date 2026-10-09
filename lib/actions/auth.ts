@@ -18,11 +18,15 @@ export async function signIn(_prev: ActionState, formData: FormData): Promise<Ac
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error || !data.user) return { ok: false, message: m.badCreds };
 
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).single();
-  const role = (profile as Pick<Profile, "role"> | null)?.role;
+  const { data: profile } = await supabase.from("profiles").select("role,status").eq("id", data.user.id).single();
+  const { role, status } = (profile as Pick<Profile, "role" | "status"> | null) ?? {};
   if (!role) {
     await supabase.auth.signOut();
     return { ok: false, message: m.noProfile };
+  }
+  if (status === "pending") {
+    await supabase.auth.signOut();
+    return { ok: false, message: m.accountPending };
   }
   redirect(withLocale(locale, HOME[role]));
 }

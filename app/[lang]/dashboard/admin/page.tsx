@@ -1,12 +1,11 @@
 import { requireRole } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
-import { codeStatus, dateTime, fmt, money, num } from "@/i18n/format";
+import { getFees } from "@/lib/fees";
+import { codeStatus, dateTime, fcfa, fmt, money } from "@/i18n/format";
 import { getDictionary, getLocale } from "@/i18n/server";
 import type { Payment, Profile, Transaction, WithdrawalCode } from "@/lib/types";
-import { PLANS } from "@/lib/plans";
-import BuyCredits from "@/components/dashboard/BuyCredits";
 import { Badge, Card, Stat, Table, Td, TransactionsTable } from "@/components/dashboard/ui";
-import { ClientActions, CreateClientForm } from "@/components/dashboard/admin-forms";
+import { ActiveClientActions, CreateClientForm, PendingClientActions } from "@/components/dashboard/admin-forms";
 import Welcome from "@/components/dashboard/Welcome";
 import { LiveTicker } from "@/components/charts/LiveTicker";
 import { Donut, FlowBars, RankBars } from "@/components/charts/StatCharts";
@@ -20,40 +19,28 @@ export async function generateMetadata() {
 }
 
 export default async function AdminDashboard() {
-  const [me, dict, locale] = await Promise.all([requireRole("admin"), getDictionary(), getLocale()]);
+  const [me, dict, locale, fees] = await Promise.all([requireRole("admin"), getDictionary(), getLocale(), getFees()]);
   const t = dict.admin;
+  const b = dict.billing;
   const supabase = await createClient();
 
-  // Toutes ces lectures passent par la RLS : l'admin ne reçoit que SES clients et leurs données.
-  const [clientsRes, txRes, codesRes, feeRes, payRes] = await Promise.all([
+  // Toutes ces lectures passent par la RLS : l'admin ne reçoit que SES clients, codes et paiements.
+  const [clientsRes, txRes, codesRes, payRes] = await Promise.all([
     supabase.from("profiles").select("*").eq("role", "client").order("created_at", { ascending: false }),
     supabase.from("transactions").select("*").order("created_at", { ascending: false }).limit(100),
     supabase.from("withdrawal_codes").select("*").order("created_at", { ascending: false }).limit(50),
-    supabase.from("settings").select("value").eq("key", "withdrawal_code_fee").single(),
-    supabase.from("payments").select("*").order("created_at", { ascending: false }).limit(20),
+    supabase.from("payments").select("*").order("created_at", { ascending: false }).limit(30),
   ]);
-  const payments = payRes.error ? null : ((payRes.data ?? []) as Payment[]); // null : migration 003 pas encore exécutée
-  const clients = (clientsRes.data ?? []) as Profile[];
+  const clients = ((clientsRes.data ?? []) as Profile[]).map((c) => ({ ...c, status: c.status ?? "active" }));
   const txs = (txRes.data ?? []) as Transaction[];
   const codes = (codesRes.data ?? []) as WithdrawalCode[];
-  const fee = Number(feeRes.data?.value ?? 5000);
+  const payments = (payRes.data ?? []) as Payment[];
 
+  const active = clients.filter((c) => c.status === "active");
+  const pendingCount = clients.length - active.length;
   const names: Record<string, string> = { [me.id]: me.full_name };
   clients.forEach((c) => (names[c.id] = c.full_name));
-
-  // Pas de crédits => pas d'espace de travail.
-  if (me.credits <= 0) {
-    return (
-      <Card>
-        <h1 className="text-2xl font-bold text-brand">{t.locked.title}</h1>
-        <p className="mt-3 text-slate-700">{t.locked.text}</p>
-        <p className="mt-2 text-sm font-medium text-brand">{dict.billing.lockedHint}</p>
-        <div className="mt-6"><BuyCredits /></div>
-      </Card>
-    );
-  }
-
-  const quotaFull = clients.length >= me.max_clients;
+  const spent = payments.filter((p) => p.status === "approved").reduce((s, p) => s + Number(p.amount_xof), 0);
   const activeCodes = codes.filter((c) => codeStatus(c) === "active").length;
 
   return (
@@ -61,9 +48,9 @@ export default async function AdminDashboard() {
       <Welcome name={me.full_name} photo="/images/partners.jpg" subtitle={t.welcome} />
       <div className="-mx-4 overflow-hidden border-y border-slate-200 bg-white"><LiveTicker /></div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Stat label={t.stats.credits} value={fmt(t.stats.creditsValue, { n: num(me.credits, locale) })} hint={fmt(t.stats.codeCost, { fee: num(fee, locale) })} />
-        <Stat label={t.stats.quota} value={`${clients.length} / ${me.max_clients}`} hint={quotaFull ? t.stats.quotaFull : fmt(t.stats.placesLeft, { n: me.max_clients - clients.length })} />
+        <Stat label={t.stats.clients} value={active.length} hint={pendingCount ? fmt(t.stats.pending, { n: pendingCount }) : undefined} />
         <Stat label={t.stats.codes} value={codes.length} hint={fmt(t.stats.activeCodes, { n: activeCodes })} />
+        <Stat label={t.stats.spent} value={fcfa(spent, locale)} hint={t.stats.spentHint} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -72,13 +59,11 @@ export default async function AdminDashboard() {
       </div>
 
       <Card title={t.cards.balances}>
-        <RankBars data={clients.map((c) => ({ name: c.full_name, value: c.balance }))} empty={t.cards.balancesEmpty} />
+        <RankBars data={active.map((c) => ({ name: c.full_name, value: c.balance }))} empty={t.cards.balancesEmpty} />
       </Card>
 
-      <Card title={dict.billing.buyTitle}><BuyCredits /></Card>
-
-      <Card title={t.cards.create}>
-        {quotaFull ? <p className="text-sm text-amber-800">{t.cards.quotaFullText}</p> : <CreateClientForm />}
+      <Card title={fmt(b.createClient.price, { fee: fcfa(fees.clientCreation, locale) })}>
+        <CreateClientForm fee={fees.clientCreation} />
       </Card>
 
       <Card title={fmt(t.cards.myClients, { n: clients.length })}>
@@ -91,9 +76,14 @@ export default async function AdminDashboard() {
                   <p className="font-semibold">{c.full_name}</p>
                   <p className="text-xs text-slate-500">{c.email}</p>
                 </div>
-                <p className="font-mono text-lg text-brand">{money(c.balance, locale)}</p>
+                <div className="flex items-center gap-3">
+                  {c.status === "pending" ? <Badge tone="gray">{b.pending.badge}</Badge> : <Badge tone="green">{t.clientActions.active}</Badge>}
+                  {c.status === "active" && <p className="font-mono text-lg text-brand">{money(c.balance, locale)}</p>}
+                </div>
               </div>
-              <ClientActions clientId={c.id} fee={fee} />
+              {c.status === "pending"
+                ? <PendingClientActions clientId={c.id} fee={fees.clientCreation} />
+                : <ActiveClientActions clientId={c.id} fee={fees.withdrawalCode} />}
             </div>
           ))}
         </div>
@@ -117,20 +107,21 @@ export default async function AdminDashboard() {
         </Table>
       </Card>
 
-      {payments && (
-        <Card title={dict.billing.history.title}>
-          <Table head={dict.billing.history.head} empty={dict.billing.history.empty}>
-            {payments.map((p) => (
-              <tr key={p.id}>
-                <Td className="whitespace-nowrap text-slate-500">{dateTime(p.created_at, locale)}</Td>
-                <Td>{PLANS.find((x) => x.id === p.plan_id)?.name ?? p.plan_id}</Td>
-                <Td className="whitespace-nowrap">{money(p.amount_eur, locale)}</Td>
-                <Td><Badge tone={p.status === "approved" ? "green" : p.status === "pending" ? "gray" : "red"}>{dict.billing.history.status[p.status]}</Badge></Td>
-              </tr>
-            ))}
-          </Table>
-        </Card>
-      )}
+      <Card title={b.history.title}>
+        <Table head={b.history.head} empty={b.history.empty}>
+          {payments.map((p) => (
+            <tr key={p.id}>
+              <Td className="whitespace-nowrap text-slate-500">{dateTime(p.created_at, locale)}</Td>
+              <Td>
+                {b.kinds[p.kind] ?? p.kind}
+                {p.target_client_id && names[p.target_client_id] && <p className="text-xs text-slate-400">{names[p.target_client_id]}</p>}
+              </Td>
+              <Td className="whitespace-nowrap">{fcfa(Number(p.amount_xof), locale)}</Td>
+              <Td><Badge tone={p.status === "approved" ? "green" : p.status === "pending" ? "gray" : "red"}>{b.status[p.status]}</Badge></Td>
+            </tr>
+          ))}
+        </Table>
+      </Card>
 
       <Card title={t.cards.transactions}>
         <TransactionsTable txs={txs} names={names} />

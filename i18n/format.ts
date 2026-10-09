@@ -4,6 +4,9 @@ import { intlLocale, type Locale } from "./config";
 export const money = (n: number, locale: Locale) =>
   new Intl.NumberFormat(intlLocale(locale), { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(Math.round(n));
 
+/** Montant en francs CFA (l'unité facturée par FedaPay), ex. "5 000 FCFA". */
+export const fcfa = (n: number, locale: Locale) => `${new Intl.NumberFormat(intlLocale(locale)).format(Math.round(n))} FCFA`;
+
 export const num = (n: number, locale: Locale) => new Intl.NumberFormat(intlLocale(locale)).format(n);
 
 /** Prix en euros : peu de décimales pour les grosses valeurs, davantage pour les petites cryptos. */
