@@ -38,7 +38,7 @@ export const adminLanding = pair(
       title: "Du pack à vos clients, ",
       titleHl: "en 4 étapes",
       items: [
-        { title: "Choisissez un pack", text: "Vos crédits et votre quota de clients sont activés immédiatement." },
+        { title: "Choisissez un pack et payez", text: "Paiement sécurisé avec FedaPay : vos crédits et votre quota de clients sont activés dès la confirmation." },
         { title: "Créez vos clients", text: "Vous saisissez leur nom, leur e-mail et un mot de passe." },
         { title: "Envoyez leurs coordonnées", text: "Un message prêt à l'emploi : un clic pour WhatsApp, e-mail ou copie." },
         { title: "Accompagnez-les", text: "Créditez leurs comptes et générez leurs codes de retrait quand ils en ont besoin." },
@@ -47,7 +47,7 @@ export const adminLanding = pair(
     packs: {
       title: "Choisissez ",
       titleHl: "votre pack",
-      subtitle: "Activation immédiate de vos crédits et de votre quota de clients.",
+      subtitle: "Paiement sécurisé avec FedaPay (mobile money ou carte). Activation dès la confirmation du paiement.",
     },
     cta: {
       title: "Ouvrez votre espace admin",
@@ -93,7 +93,7 @@ export const adminLanding = pair(
       title: "From plan to clients, ",
       titleHl: "in 4 steps",
       items: [
-        { title: "Choose a plan", text: "Your credits and client quota are activated immediately." },
+        { title: "Choose a plan and pay", text: "Secure payment with FedaPay: your credits and client quota are activated once it is confirmed." },
         { title: "Create your clients", text: "You enter their name, e-mail and a password." },
         { title: "Send their credentials", text: "A ready-made message: one click for WhatsApp, e-mail or copy." },
         { title: "Support them", text: "Credit their accounts and generate their withdrawal codes when they need them." },
@@ -102,7 +102,7 @@ export const adminLanding = pair(
     packs: {
       title: "Choose ",
       titleHl: "your plan",
-      subtitle: "Your credits and client quota are activated immediately.",
+      subtitle: "Secure payment with FedaPay (mobile money or card). Activated as soon as the payment is confirmed.",
     },
     cta: {
       title: "Open your admin account",

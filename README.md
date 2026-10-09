@@ -16,7 +16,8 @@ cp .env.example .env.local        # puis renseigner les 3 clés Supabase
 
 1. Créer un projet sur [supabase.com](https://supabase.com).
 2. **SQL Editor** → coller et exécuter [`supabase/schema.sql`](supabase/schema.sql) (tables, RLS, fonctions RPC, tarifs).
-   puis [`supabase/002_profile_payment.sql`](supabase/002_profile_payment.sql) (téléphone du profil et moyens de paiement du client).
+   puis [`supabase/002_profile_payment.sql`](supabase/002_profile_payment.sql) (téléphone du profil et moyens de paiement du client)
+   puis [`supabase/003_payments.sql`](supabase/003_payments.sql) (paiements FedaPay : table `payments` et règlement atomique).
 3. Renseigner `.env.local` (Project Settings → API) ; définir aussi `SEED_SUPER_ADMIN_*`.
 4. Créer le super admin de départ : `npm run seed:super-admin`
 5. `npm run dev` → <http://localhost:3000> → *Connexion*.
@@ -64,6 +65,37 @@ Navigateur ──form──▶ Server Action generateWithdrawalCode
                               └─ SQL atomique : verrou admin FOR UPDATE, client ∈ ses clients ?,
                                  crédits ≥ frais (table settings) ?, débit, transaction admin_fee, insert code
 ```
+
+### Paiement des crédits avec FedaPay (sandbox)
+
+Les admins achètent leurs crédits via **FedaPay**, un agrégateur de paiement (mobile money et cartes en Afrique de l'Ouest).
+
+```
+Admin ─ choisit un pack ─▶ Server Action startCheckout
+                              1. enregistre un paiement "pending" (rpc_create_payment)
+                              2. POST /v1/transactions            (FedaPay, clé secrète, montant en XOF)
+                              3. POST /v1/transactions/{id}/token (lien de la page de paiement)
+                              4. redirect ─▶ page de paiement hébergée par FedaPay (mobile money / carte)
+FedaPay ─ callback_url?id=..&status=.. ─▶ /dashboard/admin/payment/return
+                              5. relit GET /v1/transactions/{id} chez FedaPay  (on ignore ?status=)
+                              6. rpc_settle_payment : crédite UNE seule fois, vérifie le montant
+FedaPay ─ webhook signé ─▶ /api/webhooks/fedapay   (même règlement, en tâche de fond)
+```
+
+**Points de sécurité à défendre**
+- Les crédits ne sont jamais accordés à cause d'une redirection : la page de retour et le webhook **relisent la transaction chez FedaPay** avec la clé secrète avant de régler.
+- Le règlement est **atomique et idempotent** (`SELECT … FOR UPDATE`) : le retour navigateur et le webhook peuvent arriver tous les deux, ou être rejoués, sans jamais créditer deux fois.
+- Le montant renvoyé par FedaPay doit **égaler** celui demandé, sinon refus (`AMOUNT_MISMATCH`).
+- Le webhook vérifie la signature `X-FEDAPAY-SIGNATURE` (HMAC-SHA256 de `horodatage.corps`, tolérance 5 min, comparaison à temps constant).
+- `FEDAPAY_SECRET_KEY` et `FEDAPAY_WEBHOOK_SECRET` ne sont lues que côté serveur.
+
+**Devise** : FedaPay ne facture qu'en francs CFA (XOF). Les prix des packs sont en euros et convertis à la parité officielle 1 € = 655,957 XOF (arrondi au franc supérieur).
+
+**Configuration (sandbox)**
+1. Créer un compte sur [sandbox.fedapay.com](https://sandbox.fedapay.com), récupérer la clé secrète (Paramètres, Clés API).
+2. Renseigner `FEDAPAY_ENV=sandbox`, `FEDAPAY_SECRET_KEY` et `NEXT_PUBLIC_SITE_URL` dans `.env`.
+3. Webhook (optionnel en local, utile une fois déployé) : dans FedaPay, ajouter l'endpoint `https://<votre-domaine>/api/webhooks/fedapay` (événements `transaction.*`), puis copier son secret dans `FEDAPAY_WEBHOOK_SECRET`. En local, la page de retour suffit : elle règle le paiement elle-même.
+4. Passage en production : `FEDAPAY_ENV=live` avec la clé secrète live.
 
 ### Langues (français et anglais)
 

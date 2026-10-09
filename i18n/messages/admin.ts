@@ -7,7 +7,7 @@ export const admin = pair(
     welcome: "Gérez vos clients, créditez leurs comptes et générez leurs codes de retrait.",
     locked: {
       title: "Espace verrouillé",
-      text: "Votre solde est de 0 crédit. Contactez le super admin pour obtenir des crédits et débloquer votre espace.",
+      text: "Votre solde est de 0 crédit : votre espace est verrouillé tant que vous n'avez pas de crédits.",
     },
     stats: {
       credits: "Crédits",
@@ -64,7 +64,7 @@ export const admin = pair(
     welcome: "Manage your clients, credit their accounts and generate their withdrawal codes.",
     locked: {
       title: "Workspace locked",
-      text: "Your balance is 0 credits. Contact the super admin to get credits and unlock your workspace.",
+      text: "Your balance is 0 credits: your workspace stays locked until you have credits.",
     },
     stats: {
       credits: "Credits",

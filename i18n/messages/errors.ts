@@ -61,6 +61,9 @@ export const errors = pair(
       pmAdded: "Moyen de paiement enregistré.",
       pmDeleted: "Moyen de paiement supprimé.",
       pmDefault: "Moyen de paiement par défaut mis à jour.",
+      paymentUnavailable: "Le paiement en ligne n'est pas configuré pour le moment.",
+      paymentFailed: "Impossible de démarrer le paiement. Réessayez dans un instant.",
+      migration003: "Paiement indisponible : la migration SQL 003 n'a pas encore été exécutée.",
     },
   },
   {
@@ -123,6 +126,9 @@ export const errors = pair(
       pmAdded: "Payment method saved.",
       pmDeleted: "Payment method deleted.",
       pmDefault: "Default payment method updated.",
+      paymentUnavailable: "Online payment is not configured at the moment.",
+      paymentFailed: "Could not start the payment. Please try again in a moment.",
+      migration003: "Payment unavailable: SQL migration 003 has not been run yet.",
     },
   },
 );

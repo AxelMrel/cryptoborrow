@@ -59,4 +59,18 @@ export type Plan = {
 
 export type Credentials = { name: string; email: string; password: string };
 
+export type Payment = {
+  id: string;
+  user_id: string;
+  plan_id: string;
+  amount_eur: number;
+  amount_xof: number;
+  credits: number;
+  max_clients: number;
+  fedapay_id: number | null;
+  status: "pending" | "approved" | "declined" | "canceled";
+  created_at: string;
+  paid_at: string | null;
+};
+
 export type ActionState = { ok: boolean; message: string; credentials?: Credentials } | null;
