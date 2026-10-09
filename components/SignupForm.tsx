@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import { signupAdmin } from "@/lib/actions/signup";
-import { money, num } from "@/lib/format";
+import { fmt, money, num } from "@/i18n/format";
+import { useI18n } from "@/i18n/provider";
 import type { Plan } from "@/lib/types";
 import { ActionForm, SubmitButton } from "@/components/dashboard/forms";
 
 export default function SignupForm({ plans, defaultPlanId }: { plans: Plan[]; defaultPlanId?: string }) {
+  const { locale, t: dict } = useI18n();
+  const t = dict.auth.signup;
   const [planId, setPlanId] = useState(
     plans.find((p) => p.id === defaultPlanId)?.id ?? plans.find((p) => p.highlight)?.id ?? plans[0]?.id ?? "",
   );
@@ -16,7 +19,7 @@ export default function SignupForm({ plans, defaultPlanId }: { plans: Plan[]; de
     <ActionForm action={signupAdmin} className="space-y-5">
       <input type="hidden" name="plan_id" value={planId} />
       <fieldset>
-        <legend className="label">Votre pack</legend>
+        <legend className="label">{t.yourPack}</legend>
         <div className="grid gap-2 sm:grid-cols-3">
           {plans.map((p) => (
             <button
@@ -26,30 +29,30 @@ export default function SignupForm({ plans, defaultPlanId }: { plans: Plan[]; de
               }`}
             >
               <p className="font-semibold">{p.name}</p>
-              <p className="text-xs text-slate-500">{money(p.price)}</p>
+              <p className="text-xs text-slate-500">{money(p.price, locale)}</p>
             </button>
           ))}
         </div>
         {plan && (
           <p className="mt-2 text-xs text-slate-500">
-            {num(plan.credits)} crédits · {num(plan.max_clients)} clients max
+            {fmt(t.packSummary, { credits: num(plan.credits, locale), clients: num(plan.max_clients, locale) })}
           </p>
         )}
       </fieldset>
       <div>
-        <label className="label" htmlFor="su-name">Nom complet</label>
+        <label className="label" htmlFor="su-name">{t.fullName}</label>
         <input id="su-name" name="full_name" required minLength={2} maxLength={100} className="input" autoComplete="name" />
       </div>
       <div>
-        <label className="label" htmlFor="su-email">Email</label>
+        <label className="label" htmlFor="su-email">{t.email}</label>
         <input id="su-email" name="email" type="email" required className="input" autoComplete="email" />
       </div>
       <div>
-        <label className="label" htmlFor="su-pass">Mot de passe (8 caractères minimum)</label>
+        <label className="label" htmlFor="su-pass">{t.password}</label>
         <input id="su-pass" name="password" type="password" required minLength={8} className="input" autoComplete="new-password" />
       </div>
       <SubmitButton className="btn btn-primary w-full">
-        {plan ? `Payer ${money(plan.price)} et créer mon espace` : "Créer mon espace"}
+        {plan ? fmt(t.pay, { price: money(plan.price, locale) }) : t.create}
       </SubmitButton>
     </ActionForm>
   );

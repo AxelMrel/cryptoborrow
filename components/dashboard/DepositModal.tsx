@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
+import { useI18n } from "@/i18n/provider";
 
 /**
  * Bouton "Déposer" : le client ne crédite pas son compte lui-même, il est invité
@@ -8,6 +9,8 @@ import { useRef, type ReactNode } from "react";
  * focus piégé, fermeture avec Échap, fond assombri).
  */
 export default function DepositButton({ className, children }: { className?: string; children: ReactNode }) {
+  const { t: dict } = useI18n();
+  const t = dict.client.depositModal;
   const ref = useRef<HTMLDialogElement>(null);
   return (
     <>
@@ -27,12 +30,10 @@ export default function DepositButton({ className, children }: { className?: str
               <path d="M21 15a2 2 0 0 1-2 2H8l-5 4V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" />
             </svg>
           </span>
-          <h2 id="deposit-title" className="mt-5 text-xl font-semibold">Contactez votre admin</h2>
-          <p className="mt-2 text-sm leading-relaxed text-slate-500">
-            Pour déposer de l&apos;argent sur votre portefeuille, contactez votre admin. Il créditera votre compte et le solde sera mis à jour dans votre espace.
-          </p>
+          <h2 id="deposit-title" className="mt-5 text-xl font-semibold">{t.title}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-slate-500">{t.text}</p>
           <button type="button" autoFocus className="btn btn-primary mt-7 w-full !py-3 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand/30" onClick={() => ref.current?.close()}>
-            J&apos;ai compris
+            {t.ok}
           </button>
         </div>
       </dialog>

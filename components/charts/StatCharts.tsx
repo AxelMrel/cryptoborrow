@@ -3,10 +3,11 @@
 import {
   Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
+import { intlLocale } from "@/i18n/config";
+import { useI18n } from "@/i18n/provider";
 
 const BRAND = "#3563e9";
 const axis = { fontSize: 11, fill: "#62748e" };
-const nf = new Intl.NumberFormat("fr-FR");
 const tooltipStyle = { borderRadius: 12, border: "1px solid #e2e8f0", boxShadow: "0 10px 30px rgba(18,22,58,.08)", fontSize: 12 };
 const short = (n: number) => (n >= 1e6 ? `${(n / 1e6).toFixed(1)} M` : n >= 1e3 ? `${Math.round(n / 1e3)} k` : String(n));
 
@@ -14,9 +15,16 @@ function Empty({ text }: { text: string }) {
   return <div className="flex h-full items-center justify-center text-sm text-slate-400">{text}</div>;
 }
 
+function useNumberFormat() {
+  const { locale } = useI18n();
+  return new Intl.NumberFormat(intlLocale(locale));
+}
+
 /** Courbe d'évolution (solde, crédits...). */
-export function TrendArea({ data, unit = "€", empty = "Pas encore de données." }: { data: { label: string; value: number }[]; unit?: string; empty?: string }) {
-  if (data.length < 2) return <div className="h-64"><Empty text={empty} /></div>;
+export function TrendArea({ data, unit = "€", empty }: { data: { label: string; value: number }[]; unit?: string; empty?: string }) {
+  const { t } = useI18n();
+  const nf = useNumberFormat();
+  if (data.length < 2) return <div className="h-64"><Empty text={empty ?? t.dash.charts.noData} /></div>;
   return (
     <div className="h-64 w-full min-w-0">
       <ResponsiveContainer>
@@ -30,7 +38,7 @@ export function TrendArea({ data, unit = "€", empty = "Pas encore de données.
           <CartesianGrid stroke="#eef1f7" vertical={false} />
           <XAxis dataKey="label" tick={axis} tickLine={false} axisLine={false} minTickGap={24} />
           <YAxis tick={axis} tickLine={false} axisLine={false} width={48} tickFormatter={short} />
-          <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${nf.format(Number(v))} ${unit}`, "Solde"]} />
+          <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${nf.format(Number(v))} ${unit}`, t.dash.charts.balance]} />
           <Area type="monotone" dataKey="value" stroke={BRAND} strokeWidth={2.5} fill="url(#trendFill)" />
         </AreaChart>
       </ResponsiveContainer>
@@ -40,8 +48,10 @@ export function TrendArea({ data, unit = "€", empty = "Pas encore de données.
 
 /** Entrées / sorties par jour. */
 export function FlowBars({ data }: { data: { label: string; entrees: number; sorties: number }[] }) {
+  const { t } = useI18n();
+  const nf = useNumberFormat();
   if (data.every((d) => d.entrees === 0 && d.sorties === 0)) {
-    return <div className="h-64"><Empty text="Aucun flux sur les 14 derniers jours." /></div>;
+    return <div className="h-64"><Empty text={t.dash.charts.noFlows} /></div>;
   }
   return (
     <div className="h-64 w-full min-w-0">
@@ -52,8 +62,8 @@ export function FlowBars({ data }: { data: { label: string; entrees: number; sor
           <YAxis tick={axis} tickLine={false} axisLine={false} width={48} tickFormatter={short} />
           <Tooltip contentStyle={tooltipStyle} formatter={(v) => `${nf.format(Number(v))} €`} cursor={{ fill: "#f4f6fb" }} />
           <Legend iconType="circle" wrapperStyle={{ fontSize: 12 }} />
-          <Bar dataKey="entrees" name="Entrées" fill="#12a150" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="sorties" name="Sorties" fill="#e5484d" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="entrees" name={t.dash.charts.inflow} fill="#12a150" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="sorties" name={t.dash.charts.outflow} fill="#e5484d" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -61,11 +71,13 @@ export function FlowBars({ data }: { data: { label: string; entrees: number; sor
 }
 
 /** Barres horizontales : valeur par personne (soldes clients, crédits admins). */
-export function RankBars({ data, unit = "€", empty = "Aucune donnée." }: { data: { name: string; value: number }[]; unit?: string; empty?: string }) {
-  if (data.length === 0) return <div className="h-64"><Empty text={empty} /></div>;
+export function RankBars({ data, unit = "€", empty }: { data: { name: string; value: number }[]; unit?: string; empty?: string }) {
+  const { t } = useI18n();
+  const nf = useNumberFormat();
+  if (data.length === 0) return <div className="h-64"><Empty text={empty ?? t.dash.charts.noRanking} /></div>;
   const h = Math.max(256, data.length * 40);
   return (
-    <div className="w-full" style={{ height: h }}>
+    <div className="w-full min-w-0" style={{ height: h }}>
       <ResponsiveContainer>
         <BarChart data={data} layout="vertical" margin={{ top: 4, right: 16, left: 8, bottom: 0 }}>
           <CartesianGrid stroke="#eef1f7" horizontal={false} />
@@ -80,8 +92,9 @@ export function RankBars({ data, unit = "€", empty = "Aucune donnée." }: { da
 }
 
 /** Répartition (anneau). */
-export function Donut({ data, empty = "Aucune transaction." }: { data: { name: string; value: number; color: string }[]; empty?: string }) {
-  if (data.length === 0) return <div className="h-64"><Empty text={empty} /></div>;
+export function Donut({ data, empty }: { data: { name: string; value: number; color: string }[]; empty?: string }) {
+  const { t } = useI18n();
+  if (data.length === 0) return <div className="h-64"><Empty text={empty ?? t.dash.charts.noTransactions} /></div>;
   return (
     <div className="h-64 w-full min-w-0">
       <ResponsiveContainer>

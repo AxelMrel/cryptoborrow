@@ -26,8 +26,9 @@ Parcours de démonstration : un futur admin choisit un pack sur la landing (`/si
 ## 2. Architecture
 
 ```
-proxy.ts                     Protège /dashboard/* et /login (Next 16 : "middleware" = "proxy")
-app/
+proxy.ts                     Langue (redirige / vers /fr ou /en) + protection de /dashboard/* (Next 16 : "middleware" = "proxy")
+i18n/                        Internationalisation FR / EN : config, formatage (euros, dates), dictionnaires par thème (messages/)
+app/[lang]/                  Toutes les routes sont préfixées par la langue : /fr/... et /en/...
   page.tsx                   Landing CLIENT (accueil) : aucun lien vers l'espace admin
   admin/page.tsx             Landing ADMIN, adresse communiquée aux admins (outils, packs, inscription)
   dashboard/client/profile/          Profil du client (nom, téléphone, mot de passe)
@@ -63,6 +64,14 @@ Navigateur ──form──▶ Server Action generateWithdrawalCode
                               └─ SQL atomique : verrou admin FOR UPDATE, client ∈ ses clients ?,
                                  crédits ≥ frais (table settings) ?, débit, transaction admin_fee, insert code
 ```
+
+### Langues (français et anglais)
+
+- Chaque URL commence par la langue (`/fr/login`, `/en/login`). Une visite sans préfixe est redirigée selon la langue du navigateur (français par défaut), puis la langue choisie est mémorisée dans un cookie.
+- Le sélecteur **FR / EN** est dans la navigation et dans l'en-tête des dashboards ; il conserve la page, les paramètres et l'ancre.
+- Les textes vivent dans `i18n/messages/*.ts` : chaque fichier contient le français et l'anglais côte à côte, et TypeScript refuse un build où une clé manque dans une langue. Les messages des Server Actions (erreurs, confirmations) sont traduits dans la langue de la page via le cookie.
+- Montants, dates et nombres suivent la langue (`10 000 €` en français, `€10,000` en anglais).
+- Pour ajouter une langue : ajouter son code dans `i18n/config.ts` puis ses textes dans chaque fichier de `i18n/messages/`.
 
 ## 3. Sécurité (points à défendre à l'oral)
 

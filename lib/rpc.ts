@@ -1,26 +1,8 @@
 import "server-only";
+import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentProfile } from "@/lib/dal";
 import type { ActionState, Profile, Role } from "@/lib/types";
-
-const MESSAGES: Record<string, string> = {
-  FORBIDDEN: "Action non autorisée.",
-  NOT_FOUND: "Utilisateur introuvable ou n'appartenant pas à votre périmètre.",
-  INVALID_AMOUNT: "Montant invalide (entier positif, dans la limite autorisée).",
-  NO_CREDITS: "Votre solde de crédits est épuisé. Contactez le super admin.",
-  QUOTA_REACHED: "Quota de clients atteint. Contactez le super admin pour l'augmenter.",
-  QUOTA_BELOW_CURRENT: "Le quota ne peut pas être inférieur au nombre de clients existants.",
-  INSUFFICIENT_CREDITS: "Crédits insuffisants pour générer un code de retrait.",
-  CODE_COLLISION: "Collision de code, veuillez réessayer.",
-  CODE_INVALID: "Code de retrait invalide.",
-  CODE_USED: "Ce code a déjà été utilisé.",
-  CODE_EXPIRED: "Ce code a expiré. Demandez-en un nouveau à votre admin.",
-  CODE_AMOUNT_MISMATCH: "Le montant ne correspond pas à celui prévu par ce code.",
-  INSUFFICIENT_BALANCE: "Solde insuffisant.",
-  INVALID_INPUT: "Informations invalides, vérifiez les champs.",
-  LIMIT_REACHED: "Vous avez atteint la limite de 5 moyens de paiement. Supprimez-en un pour en ajouter un autre.",
-  PLAN_NOT_FOUND: "Ce pack n'existe plus ou n'est plus disponible.",
-};
 
 type RpcResult = { ok: boolean; error?: string; [k: string]: unknown };
 
@@ -34,7 +16,9 @@ export async function callRpc(fn: string, args: Record<string, unknown>): Promis
   return data as RpcResult;
 }
 
-export const errorMessage = (code?: string) => MESSAGES[code ?? ""] ?? "Une erreur est survenue. Réessayez.";
+/** Message d'erreur traduit pour un code métier (e = dictionnaire `errors` de la langue courante). */
+export const errorMessage = (code: string | undefined, e: { generic: string; codes: Record<string, string> }) =>
+  e.codes[code ?? ""] ?? e.generic;
 
 export const fail = (message: string): ActionState => ({ ok: false, message });
 export const done = (message: string): ActionState => ({ ok: true, message });
@@ -44,3 +28,6 @@ export async function guard(role: Role): Promise<Profile | null> {
   const me = await getCurrentProfile();
   return me && me.role === role ? me : null;
 }
+
+/** Rafraîchit tous les dashboards (toutes langues) après une modification. */
+export const refreshDashboard = () => revalidatePath("/[lang]/dashboard", "layout");

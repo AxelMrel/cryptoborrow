@@ -1,7 +1,9 @@
 "use client";
 
 import CoinIcon from "@/components/CoinIcon";
-import { COINS, formatEuro, formatPrice, useBinanceTickers, useFxRates } from "@/lib/market";
+import { COINS, useBinanceTickers, useFxRates } from "@/lib/market";
+import { formatEuro, formatPrice } from "@/i18n/format";
+import { useI18n } from "@/i18n/provider";
 
 function Change({ pct }: { pct: number }) {
   return <span className={pct >= 0 ? "text-up" : "text-down"}>{pct >= 0 ? "▲" : "▼"} {Math.abs(pct).toFixed(2)}%</span>;
@@ -9,6 +11,7 @@ function Change({ pct }: { pct: number }) {
 
 /** Bandeau défilant des cours en direct. */
 export function LiveTicker() {
+  const { locale, t: dict } = useI18n();
   const { tickers } = useBinanceTickers();
   const items = COINS.map((c) => ({ ...c, t: tickers[c.symbol] }));
   const row = (suffix: string) =>
@@ -17,7 +20,7 @@ export function LiveTicker() {
         <CoinIcon short={c.short} size={20} /><b>{c.short}</b>
         {c.t ? (
           <>
-            <span className="text-slate-700">{formatPrice(c.t.price)}</span>
+            <span className="text-slate-700">{formatPrice(c.t.price, locale)}</span>
             <Change pct={c.t.changePct} />
           </>
         ) : (
@@ -26,7 +29,7 @@ export function LiveTicker() {
       </span>
     ));
   return (
-    <div className="overflow-hidden border-y border-slate-200 bg-white py-2.5" aria-label="Cours en direct">
+    <div className="overflow-hidden border-y border-slate-200 bg-white py-2.5" aria-label={dict.market.tickerLabel}>
       <div className="animate-marquee flex w-max">
         <div className="flex">{row("a")}</div>
         <div className="flex" aria-hidden>{row("b")}</div>
@@ -37,13 +40,14 @@ export function LiveTicker() {
 
 /** Cartes "marchés en direct" (landing page). */
 export function MarketsGrid() {
+  const { locale, t: dict } = useI18n();
   const { tickers, live } = useBinanceTickers();
   const { eurPerUsd } = useFxRates();
   return (
     <div>
       <p className="mb-4 flex items-center justify-center gap-2 text-sm text-slate-500">
         <span className={`h-2 w-2 rounded-full ${live ? "bg-up animate-pulse" : "bg-slate-300"}`} />
-        {live ? "Flux Binance en direct" : "Connexion au flux…"}
+        {live ? dict.market.feedLive : dict.market.feedConnecting}
       </p>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {COINS.map((c) => {
@@ -54,9 +58,9 @@ export function MarketsGrid() {
                 <span className="flex items-center gap-2 font-semibold"><CoinIcon short={c.short} />{c.name}</span>
                 <span className="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-500">{c.short}</span>
               </div>
-              <p className="mt-3 font-mono text-xl">{t ? `${formatPrice(t.price)} $` : "…"}</p>
+              <p className="mt-3 font-mono text-xl">{t ? `${formatPrice(t.price, locale)} $` : "…"}</p>
               <p className="mt-1 font-mono text-xs text-slate-500">
-                {t && eurPerUsd ? `≈ ${formatEuro(t.price * eurPerUsd)}` : " "}
+                {t && eurPerUsd ? `≈ ${formatEuro(t.price * eurPerUsd, locale)}` : " "}
               </p>
               <p className="mt-2 text-sm">{t ? <Change pct={t.changePct} /> : null}</p>
             </div>

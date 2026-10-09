@@ -3,16 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 import { AreaSeries, ColorType, createChart } from "lightweight-charts";
 import { FX_CURRENCIES, fetchFxHistory, type FxCurrency } from "@/lib/market";
+import { intlLocale } from "@/i18n/config";
+import { useI18n } from "@/i18n/provider";
 
 /** Taux de change de l'euro sur 30 jours (taux Frankfurter / Banque centrale européenne). */
 export default function FxChart({ perEur }: { perEur: Record<string, number> | null }) {
   const box = useRef<HTMLDivElement>(null);
+  const { locale, t: dict } = useI18n();
   const [cur, setCur] = useState<FxCurrency>("USD");
-  const [error, setError] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     if (!box.current) return;
-    setError(null);
+    setFailed(false);
     const chart = createChart(box.current, {
       autoSize: true,
       layout: { background: { type: ColorType.Solid, color: "transparent" }, textColor: "#62748e" },
@@ -31,7 +34,7 @@ export default function FxChart({ perEur }: { perEur: Record<string, number> | n
         series.setData(d);
         chart.timeScale().fitContent();
       })
-      .catch(() => !closed && setError("Taux de change indisponibles."));
+      .catch(() => !closed && setFailed(true));
     return () => {
       closed = true;
       chart.remove();
@@ -54,10 +57,10 @@ export default function FxChart({ perEur }: { perEur: Record<string, number> | n
         ))}
       </div>
       <p className="mb-2 font-mono text-lg">
-        1 € = {perEur?.[cur]?.toLocaleString("fr-FR", { maximumFractionDigits: 4 }) ?? "…"}{" "}
+        1 € = {perEur?.[cur]?.toLocaleString(intlLocale(locale), { maximumFractionDigits: 4 }) ?? "…"}{" "}
         <span className="text-xs text-slate-400">{cur}</span>
       </p>
-      {error && <p className="mb-2 text-sm text-down">{error}</p>}
+      {failed && <p className="mb-2 text-sm text-down">{dict.market.fxError}</p>}
       <div className="relative h-72 w-full min-w-0 overflow-hidden"><div ref={box} className="absolute inset-0" /></div>
     </div>
   );

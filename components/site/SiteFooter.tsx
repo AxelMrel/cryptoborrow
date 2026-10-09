@@ -1,60 +1,40 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
-
-const CONTENT = {
-  client: {
-    home: "/",
-    blurb: "Votre portefeuille crypto en euros, les marchés en direct et des retraits sécurisés par code.",
-    columns: [
-      {
-        title: "Découvrir",
-        links: [
-          { href: "#acces", label: "Obtenir mon accès" },
-          { href: "#fonctionnalites", label: "Fonctionnalités" },
-          { href: "#marches", label: "Marchés en direct" },
-        ],
-      },
-      {
-        title: "Mon espace",
-        links: [{ href: "/login", label: "Me connecter" }],
-      },
-    ],
-  },
-  admin: {
-    home: "/admin",
-    blurb: "Créez vos clients, créditez leurs comptes et générez leurs codes de retrait depuis un seul espace.",
-    columns: [
-      {
-        title: "Espace admin",
-        links: [
-          { href: "#outils", label: "Outils" },
-          { href: "#etapes", label: "Étapes" },
-          { href: "#tarifs", label: "Packs" },
-        ],
-      },
-      {
-        title: "Mon compte",
-        links: [
-          { href: "/signup", label: "Devenir admin" },
-          { href: "/login", label: "Me connecter" },
-        ],
-      },
-    ],
-  },
-} as const;
+import { withLocale } from "@/i18n/config";
+import { getDictionary, getLocale } from "@/i18n/server";
 
 /** Pied de page des landings. Le footer client ne contient aucun lien vers l'espace admin. */
-export default function SiteFooter({ audience }: { audience: "client" | "admin" }) {
-  const c = CONTENT[audience];
+export default async function SiteFooter({ audience }: { audience: "client" | "admin" }) {
+  const [t, locale] = await Promise.all([getDictionary(), getLocale()]);
+  const f = t.site.footer;
+  const content =
+    audience === "client"
+      ? {
+          home: "/",
+          blurb: f.clientBlurb,
+          columns: [
+            { title: f.discover, links: [{ href: "#acces", label: f.access }, { href: "#fonctionnalites", label: f.features }, { href: "#marches", label: f.marketsLive }] },
+            { title: f.myArea, links: [{ href: "/login", label: f.signIn }] },
+          ],
+        }
+      : {
+          home: "/admin",
+          blurb: f.adminBlurb,
+          columns: [
+            { title: f.adminArea, links: [{ href: "#outils", label: f.tools }, { href: "#etapes", label: f.steps }, { href: "#tarifs", label: f.packs }] },
+            { title: f.myAccount, links: [{ href: "/signup", label: f.becomeAdmin }, { href: "/login", label: f.signIn }] },
+          ],
+        };
+
   return (
     <footer className="border-t border-slate-200 bg-surface">
       <div className="mx-auto grid max-w-[1160px] gap-10 px-4 py-14 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr]">
         <div>
-          <Link href={c.home} aria-label="Accueil"><Logo className="h-14" /></Link>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-500">{c.blurb}</p>
+          <Link href={withLocale(locale, content.home)} aria-label={f.home}><Logo className="h-14" /></Link>
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-500">{content.blurb}</p>
         </div>
 
-        {c.columns.map((col) => (
+        {content.columns.map((col) => (
           <nav key={col.title} aria-label={col.title}>
             <h3 className="text-sm font-semibold text-ink">{col.title}</h3>
             <ul className="mt-4 space-y-3 text-sm text-slate-500">
@@ -63,7 +43,7 @@ export default function SiteFooter({ audience }: { audience: "client" | "admin" 
                   {l.href.startsWith("#") ? (
                     <a href={l.href} className="transition hover:text-brand">{l.label}</a>
                   ) : (
-                    <Link href={l.href} className="transition hover:text-brand">{l.label}</Link>
+                    <Link href={withLocale(locale, l.href)} className="transition hover:text-brand">{l.label}</Link>
                   )}
                 </li>
               ))}
@@ -72,17 +52,15 @@ export default function SiteFooter({ audience }: { audience: "client" | "admin" 
         ))}
 
         <div>
-          <h3 className="text-sm font-semibold text-ink">Données de marché</h3>
-          <p className="mt-4 text-sm leading-relaxed text-slate-500">
-            Cours des cryptos en direct via Binance, taux de change publiés par la Banque centrale européenne, convertis en euros.
-          </p>
+          <h3 className="text-sm font-semibold text-ink">{f.marketData}</h3>
+          <p className="mt-4 text-sm leading-relaxed text-slate-500">{f.marketDataText}</p>
         </div>
       </div>
 
       <div className="border-t border-slate-200">
         <div className="mx-auto flex max-w-[1160px] flex-col items-center justify-between gap-3 px-4 py-6 text-xs text-slate-400 sm:flex-row">
-          <p>© 2026 CoinPulse. Tous droits réservés.</p>
-          <a href="#top" className="font-medium text-slate-500 transition hover:text-brand">Retour en haut ↑</a>
+          <p>{f.rights}</p>
+          <a href="#top" className="font-medium text-slate-500 transition hover:text-brand">{f.backToTop} ↑</a>
         </div>
       </div>
     </footer>

@@ -2,20 +2,24 @@
 
 import { useEffect, useRef, useState } from "react";
 import { CandlestickSeries, ColorType, createChart, type UTCTimestamp } from "lightweight-charts";
-import { COINS, formatEuro } from "@/lib/market";
+import { COINS } from "@/lib/market";
+import { formatEuro } from "@/i18n/format";
+import { intlLocale } from "@/i18n/config";
+import { useI18n } from "@/i18n/provider";
 
 type Candle = { time: UTCTimestamp; open: number; high: number; low: number; close: number };
 
 /** Bougies 1 min : historique REST Binance + mise à jour en direct via WebSocket (Lightweight Charts). */
 export default function CryptoChart({ eurPerUsd }: { eurPerUsd?: number | null }) {
   const box = useRef<HTMLDivElement>(null);
+  const { locale, t: dict } = useI18n();
   const [symbol, setSymbol] = useState<string>(COINS[0].symbol);
   const [last, setLast] = useState<number | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     if (!box.current) return;
-    setError(null);
+    setFailed(false);
     const chart = createChart(box.current, {
       autoSize: true,
       layout: { background: { type: ColorType.Solid, color: "transparent" }, textColor: "#62748e" },
@@ -53,7 +57,7 @@ export default function CryptoChart({ eurPerUsd }: { eurPerUsd?: number | null }
           setLast(+k.c);
         };
       })
-      .catch(() => !closed && setError("Données de marché indisponibles (Binance injoignable)."));
+      .catch(() => !closed && setFailed(true));
 
     return () => {
       closed = true;
@@ -79,13 +83,13 @@ export default function CryptoChart({ eurPerUsd }: { eurPerUsd?: number | null }
       </div>
       {last !== null && (
         <p className="mb-2 font-mono text-lg">
-          {last.toLocaleString("fr-FR", { maximumFractionDigits: 4 })} <span className="text-xs text-slate-400">USDT</span>
+          {last.toLocaleString(intlLocale(locale), { maximumFractionDigits: 4 })} <span className="text-xs text-slate-400">USDT</span>
           {eurPerUsd ? (
-            <span className="ml-3 text-sm text-slate-500">≈ {formatEuro(last * eurPerUsd)}</span>
+            <span className="ml-3 text-sm text-slate-500">≈ {formatEuro(last * eurPerUsd, locale)}</span>
           ) : null}
         </p>
       )}
-      {error && <p className="mb-2 text-sm text-down">{error}</p>}
+      {failed && <p className="mb-2 text-sm text-down">{dict.market.cryptoError}</p>}
       <div className="relative h-72 w-full min-w-0 overflow-hidden"><div ref={box} className="absolute inset-0" /></div>
     </div>
   );

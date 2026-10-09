@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, type ReactNode } from "react";
+import { useActionState, useCallback, useEffect, useRef, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import type { ActionState } from "@/lib/types";
 
@@ -33,19 +33,53 @@ export function Feedback({ state }: { state: ActionState }) {
   );
 }
 
+type Action = (prev: ActionState, formData: FormData) => Promise<ActionState>;
+
+/**
+ * useActionState + conservation des saisies en cas d'erreur.
+ * React réinitialise un formulaire à la fin de chaque action ; sans ceci, une simple faute de frappe
+ * efface tous les champs. En cas d'échec on remet donc les valeurs saisies (sauf les mots de passe).
+ */
+export function useActionFormState(action: Action) {
+  const snapshot = useRef<Record<string, string>>({});
+  const formRef = useRef<HTMLFormElement>(null);
+  const wrapped = useCallback<Action>(
+    async (prev, formData) => {
+      snapshot.current = Object.fromEntries([...formData.entries()].filter((e): e is [string, string] => typeof e[1] === "string"));
+      return action(prev, formData);
+    },
+    [action],
+  );
+  const [state, formAction] = useActionState(wrapped, null);
+
+  useEffect(() => {
+    if (!state || state.ok || !formRef.current) return;
+    for (const el of Array.from(formRef.current.elements)) {
+      if (
+        (el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement) &&
+        el.name && el.type !== "password" && el.type !== "hidden" && el.name in snapshot.current
+      ) {
+        el.value = snapshot.current[el.name];
+      }
+    }
+  }, [state]);
+
+  return [state, formAction, formRef] as const;
+}
+
 /** Formulaire branché sur une Server Action, avec retour utilisateur. */
 export function ActionForm({
   action,
   children,
   className,
 }: {
-  action: (prev: ActionState, formData: FormData) => Promise<ActionState>;
+  action: Action;
   children: ReactNode;
   className?: string;
 }) {
-  const [state, formAction] = useActionState(action, null);
+  const [state, formAction, formRef] = useActionFormState(action);
   return (
-    <form action={formAction} className={className}>
+    <form ref={formRef} action={formAction} className={className}>
       {children}
       <Feedback state={state} />
     </form>

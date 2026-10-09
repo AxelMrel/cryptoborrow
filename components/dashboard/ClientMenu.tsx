@@ -3,17 +3,20 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { CardIcon, HomeIcon, UserIcon } from "@/components/Icons";
-
-const ITEMS = [
-  { href: "/dashboard/client", label: "Mon portefeuille", icon: HomeIcon },
-  { href: "/dashboard/client/profile", label: "Mon profil", icon: UserIcon },
-  { href: "/dashboard/client/payment-methods", label: "Moyens de paiement", icon: CardIcon },
-];
+import { withLocale } from "@/i18n/config";
+import { useI18n } from "@/i18n/provider";
 
 /** Menu du client : avatar qui ouvre un panneau (profil, moyens de paiement…). */
 export default function ClientMenu({ initials, name, email }: { initials: string; name: string; email: string }) {
+  const { locale, t } = useI18n();
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
+
+  const items = [
+    { href: "/dashboard/client", label: t.dash.menu.wallet, icon: HomeIcon },
+    { href: "/dashboard/client/profile", label: t.dash.menu.profile, icon: UserIcon },
+    { href: "/dashboard/client/payment-methods", label: t.dash.menu.payments, icon: CardIcon },
+  ];
 
   useEffect(() => {
     if (!open) return;
@@ -38,7 +41,7 @@ export default function ClientMenu({ initials, name, email }: { initials: string
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label="Menu du compte"
+        aria-label={t.dash.accountMenu}
         className="flex h-10 items-center gap-2 rounded-full border border-slate-200 bg-white py-1 pl-1 pr-3 transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
       >
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand text-sm font-semibold text-white">{initials}</span>
@@ -55,10 +58,10 @@ export default function ClientMenu({ initials, name, email }: { initials: string
             <p className="truncate text-xs text-slate-500">{email}</p>
           </div>
           <nav className="p-1.5">
-            {ITEMS.map(({ href, label, icon: Icon }) => (
+            {items.map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
-                href={href}
+                href={withLocale(locale, href)}
                 role="menuitem"
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-700 transition hover:bg-slate-50 hover:text-brand"

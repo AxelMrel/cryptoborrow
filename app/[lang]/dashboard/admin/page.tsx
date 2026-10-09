@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
-import { codeStatus, dateTime, money, num } from "@/lib/format";
+import { codeStatus, dateTime, fmt, money, num } from "@/i18n/format";
+import { getDictionary, getLocale } from "@/i18n/server";
 import type { Profile, Transaction, WithdrawalCode } from "@/lib/types";
 import { Badge, Card, Stat, Table, Td, TransactionsTable } from "@/components/dashboard/ui";
 import { ClientActions, CreateClientForm } from "@/components/dashboard/admin-forms";
@@ -12,10 +13,13 @@ import { dailyFlows, typeBreakdown } from "@/lib/stats";
 // Pages authentifiées : le contenu dépend de la session, la navigation n'a pas besoin d'être "instantanée".
 export const instant = false;
 
-export const metadata = { title: "Espace admin | CoinPulse" };
+export async function generateMetadata() {
+  return { title: (await getDictionary()).admin.meta };
+}
 
 export default async function AdminDashboard() {
-  const me = await requireRole("admin");
+  const [me, dict, locale] = await Promise.all([requireRole("admin"), getDictionary(), getLocale()]);
+  const t = dict.admin;
   const supabase = await createClient();
 
   // Toutes ces lectures passent par la RLS : l'admin ne reçoit que SES clients et leurs données.
@@ -37,45 +41,40 @@ export default async function AdminDashboard() {
   if (me.credits <= 0) {
     return (
       <Card>
-        <h1 className="text-2xl font-bold text-brand">Espace verrouillé</h1>
-        <p className="mt-3 text-slate-700">
-          Votre solde est de 0 crédit. Contactez le super admin pour obtenir des crédits et débloquer votre espace.
-        </p>
+        <h1 className="text-2xl font-bold text-brand">{t.locked.title}</h1>
+        <p className="mt-3 text-slate-700">{t.locked.text}</p>
       </Card>
     );
   }
 
   const quotaFull = clients.length >= me.max_clients;
+  const activeCodes = codes.filter((c) => codeStatus(c) === "active").length;
 
   return (
     <>
-      <Welcome name={me.full_name} photo="/images/partners.jpg" subtitle="Gérez vos clients, créditez leurs comptes et générez leurs codes de retrait." />
+      <Welcome name={me.full_name} photo="/images/partners.jpg" subtitle={t.welcome} />
       <div className="-mx-4 overflow-hidden border-y border-slate-200 bg-white"><LiveTicker /></div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Stat label="Crédits" value={`${num(me.credits)} crédits`} hint={`Un code de retrait coûte ${num(fee)} crédits`} />
-        <Stat label="Clients / quota" value={`${clients.length} / ${me.max_clients}`} hint={quotaFull ? "Quota atteint" : "Places restantes : " + (me.max_clients - clients.length)} />
-        <Stat label="Codes générés" value={codes.length} hint={`${codes.filter((c) => codeStatus(c) === "active").length} actif(s)`} />
+        <Stat label={t.stats.credits} value={fmt(t.stats.creditsValue, { n: num(me.credits, locale) })} hint={fmt(t.stats.codeCost, { fee: num(fee, locale) })} />
+        <Stat label={t.stats.quota} value={`${clients.length} / ${me.max_clients}`} hint={quotaFull ? t.stats.quotaFull : fmt(t.stats.placesLeft, { n: me.max_clients - clients.length })} />
+        <Stat label={t.stats.codes} value={codes.length} hint={fmt(t.stats.activeCodes, { n: activeCodes })} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <Card title="Flux de mes clients (14 jours)" className="lg:col-span-2"><FlowBars data={dailyFlows(txs)} /></Card>
-        <Card title="Répartition des opérations"><Donut data={typeBreakdown(txs)} /></Card>
+        <Card title={t.cards.flows} className="lg:col-span-2"><FlowBars data={dailyFlows(txs)} /></Card>
+        <Card title={t.cards.breakdown}><Donut data={typeBreakdown(txs, dict.dash.txTypes)} /></Card>
       </div>
 
-      <Card title="Soldes de mes clients">
-        <RankBars data={clients.map((c) => ({ name: c.full_name, value: c.balance }))} empty="Créez votre premier client pour voir ses soldes." />
+      <Card title={t.cards.balances}>
+        <RankBars data={clients.map((c) => ({ name: c.full_name, value: c.balance }))} empty={t.cards.balancesEmpty} />
       </Card>
 
-      <Card title="Créer un client">
-        {quotaFull ? (
-          <p className="text-sm text-amber-800">Quota atteint : demandez au super admin d&apos;augmenter votre limite.</p>
-        ) : (
-          <CreateClientForm />
-        )}
+      <Card title={t.cards.create}>
+        {quotaFull ? <p className="text-sm text-amber-800">{t.cards.quotaFullText}</p> : <CreateClientForm />}
       </Card>
 
-      <Card title={`Mes clients (${clients.length})`}>
-        {clients.length === 0 && <p className="py-4 text-center text-sm text-slate-400">Aucun client pour le moment.</p>}
+      <Card title={fmt(t.cards.myClients, { n: clients.length })}>
+        {clients.length === 0 && <p className="py-4 text-center text-sm text-slate-400">{t.cards.noClients}</p>}
         <div className="space-y-4">
           {clients.map((c) => (
             <div key={c.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
@@ -84,7 +83,7 @@ export default async function AdminDashboard() {
                   <p className="font-semibold">{c.full_name}</p>
                   <p className="text-xs text-slate-500">{c.email}</p>
                 </div>
-                <p className="font-mono text-lg text-brand">{money(c.balance)}</p>
+                <p className="font-mono text-lg text-brand">{money(c.balance, locale)}</p>
               </div>
               <ClientActions clientId={c.id} fee={fee} />
             </div>
@@ -92,25 +91,25 @@ export default async function AdminDashboard() {
         </div>
       </Card>
 
-      <Card title="Codes de retrait générés">
-        <Table head={["Créé le", "Client", "Code", "Montant", "Expire", "Statut"]} empty="Aucun code généré.">
+      <Card title={t.cards.codes}>
+        <Table head={t.codeHead} empty={t.cards.noCodes}>
           {codes.map((c) => {
             const st = codeStatus(c);
             return (
               <tr key={c.id}>
-                <Td className="whitespace-nowrap text-slate-500">{dateTime(c.created_at)}</Td>
-                <Td>{names[c.client_id] ?? "Inconnu"}</Td>
+                <Td className="whitespace-nowrap text-slate-500">{dateTime(c.created_at, locale)}</Td>
+                <Td>{names[c.client_id] ?? dict.dash.names.unknown}</Td>
                 <Td className="font-mono tracking-widest">{c.code}</Td>
-                <Td>{c.amount ? money(c.amount) : "Libre"}</Td>
-                <Td className="whitespace-nowrap text-slate-500">{dateTime(c.expires_at)}</Td>
-                <Td><Badge tone={st === "active" ? "cyan" : st === "used" ? "green" : "gray"}>{st === "active" ? "Actif" : st === "used" ? "Utilisé" : "Expiré"}</Badge></Td>
+                <Td>{c.amount ? money(c.amount, locale) : dict.dash.free}</Td>
+                <Td className="whitespace-nowrap text-slate-500">{dateTime(c.expires_at, locale)}</Td>
+                <Td><Badge tone={st === "active" ? "cyan" : st === "used" ? "green" : "gray"}>{dict.dash.status[st]}</Badge></Td>
               </tr>
             );
           })}
         </Table>
       </Card>
 
-      <Card title="Transactions (mes clients et mes crédits)">
+      <Card title={t.cards.transactions}>
         <TransactionsTable txs={txs} names={names} />
       </Card>
     </>

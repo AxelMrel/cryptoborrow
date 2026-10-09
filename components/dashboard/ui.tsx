@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { TX_LABEL, dateShort, dateTime, num } from "@/lib/format";
+import { dateShort, dateTime, num } from "@/i18n/format";
+import { getDictionary, getLocale } from "@/i18n/server";
 import type { Transaction } from "@/lib/types";
 
 export function Card({ title, children, className = "" }: { title?: string; children: ReactNode; className?: string }) {
@@ -45,7 +46,7 @@ export function Table({ head, children, empty, minWidth = "min-w-[520px]" }: { h
         </thead>
         <tbody className="divide-y divide-slate-100">{children}</tbody>
       </table>
-      {!hasRows && <p className="px-3 py-6 text-center text-sm text-slate-400">{empty ?? "Aucune donnée."}</p>}
+      {!hasRows && <p className="px-3 py-6 text-center text-sm text-slate-400">{empty}</p>}
     </div>
   );
 }
@@ -58,7 +59,7 @@ export const Td = ({ children, className = "" }: { children: ReactNode; classNam
  * Pour l'admin et le super admin (pas de `viewerId`), le nom de la personne concernée
  * s'affiche en petit sous le type. `names` : id -> nom (ce que la RLS laisse voir).
  */
-export function TransactionsTable({
+export async function TransactionsTable({
   txs,
   names,
   viewerId,
@@ -67,21 +68,23 @@ export function TransactionsTable({
   names: Record<string, string>;
   viewerId?: string;
 }) {
-  const positive = (t: Transaction) =>
-    viewerId ? t.to_user === viewerId : t.type === "deposit" || t.type === "client_credit" || t.type === "admin_credit";
-  const subject = (t: Transaction) => (viewerId ? null : names[t.to_user ?? t.from_user ?? ""] ?? null);
+  const [dict, locale] = await Promise.all([getDictionary(), getLocale()]);
+  const t = dict.dash;
+  const positive = (x: Transaction) =>
+    viewerId ? x.to_user === viewerId : x.type === "deposit" || x.type === "client_credit" || x.type === "admin_credit";
+  const subject = (x: Transaction) => (viewerId ? null : names[x.to_user ?? x.from_user ?? ""] ?? null);
   return (
-    <Table head={["Date", "Type", "Montant (€)"]} empty="Aucune transaction pour le moment." minWidth="min-w-0">
-      {txs.map((t) => (
-        <tr key={t.id}>
-          <Td className="whitespace-nowrap text-slate-500"><span title={dateTime(t.created_at)}>{dateShort(t.created_at)}</span></Td>
+    <Table head={[t.table.date, t.table.type, t.table.amount]} empty={t.table.empty} minWidth="min-w-0">
+      {txs.map((x) => (
+        <tr key={x.id}>
+          <Td className="whitespace-nowrap text-slate-500"><span title={dateTime(x.created_at, locale)}>{dateShort(x.created_at)}</span></Td>
           <Td>
-            <Badge tone={t.type === "withdrawal" || t.type === "admin_fee" ? "red" : "green"}>{TX_LABEL[t.type]}</Badge>
-            {subject(t) && <p className="mt-1 text-xs text-slate-400">{subject(t)}</p>}
+            <Badge tone={x.type === "withdrawal" || x.type === "admin_fee" ? "red" : "green"}>{t.txTypes[x.type]}</Badge>
+            {subject(x) && <p className="mt-1 text-xs text-slate-400">{subject(x)}</p>}
           </Td>
           <Td className="whitespace-nowrap font-mono">
-            <span className={positive(t) ? "text-up" : "text-down"}>
-              {positive(t) ? "+" : "−"}{num(t.amount)}
+            <span className={positive(x) ? "text-up" : "text-down"}>
+              {positive(x) ? "+" : "−"}{num(x.amount, locale)}
             </span>
           </Td>
         </tr>

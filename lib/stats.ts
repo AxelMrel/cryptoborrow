@@ -1,15 +1,14 @@
-import { TX_LABEL } from "@/lib/format";
 import type { Transaction, TxType } from "@/lib/types";
 
 const day = (iso: string) => iso.slice(5, 10).split("-").reverse().join("/"); // "MM-DD" -> "DD/MM" (UTC)
 const dayTime = (iso: string) => `${day(iso)} ${iso.slice(11, 16)}`; // "DD/MM HH:mm" (UTC)
 
 /** Évolution du solde d'un utilisateur, reconstruite à partir de ses transactions (la plus ancienne en premier). */
-export function balanceSeries(txs: Transaction[], viewerId: string, currentBalance: number) {
+export function balanceSeries(txs: Transaction[], viewerId: string, currentBalance: number, startLabel: string) {
   const asc = [...txs].sort((a, b) => a.created_at.localeCompare(b.created_at));
   const delta = (t: Transaction) => (t.to_user === viewerId ? t.amount : -t.amount);
   let bal = currentBalance - asc.reduce((s, t) => s + delta(t), 0);
-  const points = [{ label: "Départ", value: Math.max(bal, 0) }];
+  const points = [{ label: startLabel, value: Math.max(bal, 0) }];
   for (const t of asc) {
     bal += delta(t);
     points.push({ label: dayTime(t.created_at), value: bal });
@@ -41,9 +40,9 @@ const TYPE_COLOR: Record<TxType, string> = {
   admin_fee: "#f59e0b",
 };
 
-/** Répartition des transactions par type (nombre). */
-export function typeBreakdown(txs: Transaction[]) {
+/** Répartition des transactions par type (nombre). `labels` : libellés traduits par type. */
+export function typeBreakdown(txs: Transaction[], labels: Record<TxType, string>) {
   const counts = new Map<TxType, number>();
   txs.forEach((t) => counts.set(t.type, (counts.get(t.type) ?? 0) + 1));
-  return [...counts].map(([type, value]) => ({ name: TX_LABEL[type], value, color: TYPE_COLOR[type] }));
+  return [...counts].map(([type, value]) => ({ name: labels[type], value, color: TYPE_COLOR[type] }));
 }

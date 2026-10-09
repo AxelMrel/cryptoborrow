@@ -100,13 +100,3 @@ export async function fetchFxHistory(cur: FxCurrency, days = 30) {
     .map(([time, v]) => ({ time, value: v[cur] }))
     .sort((a, b) => a.time.localeCompare(b.time));
 }
-
-export function formatPrice(p: number) {
-  const digits = p >= 100 ? 2 : p >= 1 ? 3 : 5;
-  return new Intl.NumberFormat("fr-FR", { maximumFractionDigits: digits, minimumFractionDigits: p >= 100 ? 2 : 0 }).format(p);
-}
-
-/** Prix en euros : 2 décimales au-dessus de 1 €, 4 en dessous (petites cryptos). */
-export function formatEuro(n: number) {
-  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: n >= 100 ? 0 : n >= 1 ? 2 : 4 }).format(n);
-}

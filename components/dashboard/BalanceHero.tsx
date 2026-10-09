@@ -1,7 +1,8 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { num } from "@/lib/format";
+import { num } from "@/i18n/format";
+import { useI18n } from "@/i18n/provider";
 import { EyeIcon, EyeOffIcon } from "@/components/Icons";
 import DepositButton from "./DepositModal";
 
@@ -50,6 +51,8 @@ function WalletArt({ className }: { className?: string }) {
 
 /** Carte du solde : "Solde disponible", montant masquable, portefeuille, actions Déposer / Retirer. */
 export default function BalanceHero({ balance }: { balance: number }) {
+  const { locale, t: dict } = useI18n();
+  const t = dict.client.balance;
   const hidden = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   return (
     <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-brand-dark px-5 py-5 text-white shadow-[0_18px_44px_rgba(53,99,233,0.28)] sm:px-8 sm:py-6">
@@ -58,11 +61,11 @@ export default function BalanceHero({ balance }: { balance: number }) {
       <div className="relative flex items-center justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-3">
-            <p className="text-base font-medium sm:text-lg">Solde disponible</p>
+            <p className="text-base font-medium sm:text-lg">{t.label}</p>
             <button
               type="button"
               onClick={() => toggleHidden(!hidden)}
-              aria-label={hidden ? "Afficher le solde" : "Masquer le solde"}
+              aria-label={hidden ? t.show : t.hide}
               aria-pressed={hidden}
               className="rounded-full p-1.5 text-white/80 transition hover:bg-white/15 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
             >
@@ -71,13 +74,13 @@ export default function BalanceHero({ balance }: { balance: number }) {
           </div>
 
           <p className="mt-2 flex items-baseline gap-2">
-            <span className="break-all text-4xl font-bold leading-none sm:text-5xl">{hidden ? "••••••" : num(balance)}</span>
+            <span className="break-all text-4xl font-bold leading-none sm:text-5xl">{hidden ? "••••••" : num(balance, locale)}</span>
             <span className="text-base font-semibold text-white/80 sm:text-xl">€</span>
           </p>
 
           <div className="mt-5 flex gap-3">
-            <DepositButton className="btn bg-white !px-6 !py-2.5 !text-brand hover:bg-slate-100">Déposer</DepositButton>
-            <a href="#retrait" className="btn border border-white/50 !px-6 !py-2.5 text-white hover:bg-white/10">Retirer</a>
+            <DepositButton className="btn bg-white !px-6 !py-2.5 !text-brand hover:bg-slate-100">{t.deposit}</DepositButton>
+            <a href="#retrait" className="btn border border-white/50 !px-6 !py-2.5 text-white hover:bg-white/10">{t.withdraw}</a>
           </div>
         </div>
 
