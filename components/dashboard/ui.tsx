@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { TX_LABEL, dateTime, fcfa } from "@/lib/format";
+import { TX_LABEL, dateShort, dateTime, num } from "@/lib/format";
 import type { Transaction } from "@/lib/types";
 
 export function Card({ title, children, className = "" }: { title?: string; children: ReactNode; className?: string }) {
@@ -31,15 +31,15 @@ export function Badge({ tone, children }: { tone: "green" | "red" | "gray" | "cy
   return <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${tones[tone]}`}>{children}</span>;
 }
 
-export function Table({ head, children, empty }: { head: string[]; children: ReactNode; empty?: string }) {
+export function Table({ head, children, empty, minWidth = "min-w-[520px]" }: { head: string[]; children: ReactNode; empty?: string; minWidth?: string }) {
   const hasRows = Array.isArray(children) ? children.length > 0 : Boolean(children);
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[520px] text-left text-sm">
+      <table className={`w-full ${minWidth} text-left text-sm`}>
         <thead>
           <tr className="border-b border-slate-200 text-xs uppercase tracking-wider text-slate-400">
             {head.map((h) => (
-              <th key={h} className="px-3 py-2 font-medium">{h}</th>
+              <th key={h} className="px-2 py-2 font-medium sm:px-3">{h}</th>
             ))}
           </tr>
         </thead>
@@ -50,10 +50,14 @@ export function Table({ head, children, empty }: { head: string[]; children: Rea
   );
 }
 export const Td = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <td className={`px-3 py-2.5 align-middle ${className}`}>{children}</td>
+  <td className={`px-2 py-2.5 align-middle sm:px-3 ${className}`}>{children}</td>
 );
 
-/** Historique des transactions. `names` : id -> nom (ce que la RLS laisse voir). */
+/**
+ * Historique des transactions : 3 colonnes (Date, Type, Montant) pour rester lisible sur mobile.
+ * Pour l'admin et le super admin (pas de `viewerId`), le nom de la personne concernée
+ * s'affiche en petit sous le type. `names` : id -> nom (ce que la RLS laisse voir).
+ */
 export function TransactionsTable({
   txs,
   names,
@@ -63,22 +67,23 @@ export function TransactionsTable({
   names: Record<string, string>;
   viewerId?: string;
 }) {
-  const who = (id: string | null) => (id ? (id === viewerId ? "Moi" : names[id] ?? "Admin") : "Externe");
   const positive = (t: Transaction) =>
     viewerId ? t.to_user === viewerId : t.type === "deposit" || t.type === "client_credit" || t.type === "admin_credit";
+  const subject = (t: Transaction) => (viewerId ? null : names[t.to_user ?? t.from_user ?? ""] ?? null);
   return (
-    <Table head={["Date", "Type", "Montant", "De", "Vers"]} empty="Aucune transaction pour le moment.">
+    <Table head={["Date", "Type", "Montant (FCFA)"]} empty="Aucune transaction pour le moment." minWidth="min-w-0">
       {txs.map((t) => (
         <tr key={t.id}>
-          <Td className="whitespace-nowrap text-slate-500">{dateTime(t.created_at)}</Td>
-          <Td><Badge tone={t.type === "withdrawal" || t.type === "admin_fee" ? "red" : "green"}>{TX_LABEL[t.type]}</Badge></Td>
+          <Td className="whitespace-nowrap text-slate-500"><span title={dateTime(t.created_at)}>{dateShort(t.created_at)}</span></Td>
+          <Td>
+            <Badge tone={t.type === "withdrawal" || t.type === "admin_fee" ? "red" : "green"}>{TX_LABEL[t.type]}</Badge>
+            {subject(t) && <p className="mt-1 text-xs text-slate-400">{subject(t)}</p>}
+          </Td>
           <Td className="whitespace-nowrap font-mono">
             <span className={positive(t) ? "text-up" : "text-down"}>
-              {positive(t) ? "+" : "−"}{fcfa(t.amount)}
+              {positive(t) ? "+" : "−"}{num(t.amount)}
             </span>
           </Td>
-          <Td>{who(t.from_user)}</Td>
-          <Td>{who(t.to_user)}</Td>
         </tr>
       ))}
     </Table>

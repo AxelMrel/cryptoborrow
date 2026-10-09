@@ -7,6 +7,9 @@ export const num = (n: number) => nf.format(n);
 export const dateTime = (iso: string) =>
   new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "short", timeZone: "UTC" }).format(new Date(iso)) + " UTC";
 
+/** Date courte pour les tableaux serrés : "09/10 06:59" (UTC). */
+export const dateShort = (iso: string) => `${iso.slice(8, 10)}/${iso.slice(5, 7)} ${iso.slice(11, 16)}`;
+
 export const TX_LABEL: Record<TxType, string> = {
   deposit: "Dépôt",
   withdrawal: "Retrait",
