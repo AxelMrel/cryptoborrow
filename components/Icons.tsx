@@ -19,6 +19,9 @@ export const CoinsIcon = make(<><circle cx="9" cy="9" r="6" /><path d="M15 9.2A6
 export const CheckIcon = make(<path d="m5 12.5 4.5 4.5L19 7.5" />);
 export const CopyIcon = make(<><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V6a2 2 0 0 1 2-2h9" /></>);
 
+export const EyeIcon = make(<><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></>);
+export const EyeOffIcon = make(<><path d="M9.9 5.2A9.6 9.6 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1" /><path d="M6.6 6.6C3.6 8.5 2 12 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.4-1" /><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" /><path d="m3 3 18 18" /></>);
+
 /** Pastille d'icône sur fond bleu clair. */
 export function IconBadge({ children }: { children: ReactNode }) {
   return <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand/10 text-brand">{children}</div>;

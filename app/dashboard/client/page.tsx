@@ -23,7 +23,7 @@ export default async function ClientDashboard() {
 
   return (
     <>
-      <BalanceHero name={me.full_name} balance={me.balance} />
+      <BalanceHero balance={me.balance} />
 
       <div id="retrait" className="scroll-mt-24">
         <Card title="Retrait"><WithdrawFlow /></Card>
