@@ -20,12 +20,10 @@ export default async function ClientDashboard() {
   // La RLS garantit que seules les transactions de ce client sont renvoyées.
   const { data } = await supabase.from("transactions").select("*").order("created_at", { ascending: false }).limit(50);
   const txs = (data ?? []) as Transaction[];
-  const deposits = txs.filter((t) => t.to_user === me.id).reduce((s, t) => s + t.amount, 0);
-  const withdrawals = txs.filter((t) => t.from_user === me.id).reduce((s, t) => s + t.amount, 0);
 
   return (
     <>
-      <BalanceHero name={me.full_name} balance={me.balance} received={deposits} withdrawn={withdrawals} />
+      <BalanceHero name={me.full_name} balance={me.balance} />
       <div className="-mx-4 overflow-hidden border-y border-slate-200 bg-white"><LiveTicker /></div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
