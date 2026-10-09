@@ -57,7 +57,7 @@ export default async function SuperAdminDashboard() {
 
   return (
     <>
-      <Welcome name={me.full_name} photo="/images/man-smile.jpg" subtitle={t.welcome} />
+      <Welcome name={me.full_name} scene="market" subtitle={t.welcome} />
       <div className="-mx-4 overflow-hidden border-y border-slate-200 bg-white"><LiveTicker /></div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label={t.stats.admins} value={num(admins.length, locale)} />

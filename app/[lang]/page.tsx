@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import SiteNav from "@/components/site/SiteNav";
 import SiteFooter from "@/components/site/SiteFooter";
 import LiveBtcCard from "@/components/LiveBtcCard";
+import { MarketScene, PaymentScene, WalletScene } from "@/components/illustrations/Scenes";
 import { ChartIcon, IconBadge, KeyIcon, ShieldIcon, WalletIcon } from "@/components/Icons";
 import { LiveTicker, MarketsGrid } from "@/components/charts/LiveTicker";
 import { withLocale } from "@/i18n/config";
@@ -46,10 +46,9 @@ export default async function Home() {
 
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
             <div className="absolute -inset-4 rounded-[2.5rem] bg-brand/10" />
-            <Image
-              src="/images/woman-pagne.jpg" alt={t.heroAlt} width={560} height={640} priority
-              className="relative h-[440px] w-full rounded-[2rem] object-cover object-top shadow-[0_24px_60px_rgba(18,22,58,0.18)] sm:h-[500px]"
-            />
+            <div className="relative flex h-[400px] items-center justify-center rounded-[2rem] bg-gradient-to-br from-brand/10 via-white to-brand/5 shadow-[0_24px_60px_rgba(18,22,58,0.10)] ring-1 ring-brand/10 sm:h-[480px]">
+              <MarketScene className="h-auto max-h-full w-full p-3" />
+            </div>
             <div className="animate-float absolute -left-3 top-10 sm:-left-8"><LiveBtcCard /></div>
             <div className="animate-float absolute -bottom-6 right-2 w-56 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_18px_44px_rgba(18,22,58,0.14)] [animation-delay:-3s] sm:-right-6">
               <p className="text-xs text-slate-400">{t.balanceLabel}</p>
@@ -64,7 +63,7 @@ export default async function Home() {
 
       <section id="acces" className="scroll-mt-24 bg-sand/60 px-4 py-20">
         <div className="mx-auto grid max-w-[1160px] items-center gap-12 lg:grid-cols-[1fr_1.2fr]">
-          <Image src="/images/woman-portrait.jpg" alt={t.access.alt} width={480} height={560} className="mx-auto h-[420px] w-full max-w-sm rounded-[2rem] object-cover shadow-[0_24px_60px_rgba(18,22,58,0.16)]" />
+          <div className="mx-auto flex h-[340px] w-full max-w-sm items-center justify-center rounded-[2rem] bg-white shadow-[0_24px_60px_rgba(18,22,58,0.12)] ring-1 ring-slate-200"><WalletScene className="h-auto max-h-full w-full p-3" /></div>
           <div>
             <h2 className="text-3xl font-semibold sm:text-4xl">{t.access.title}<span className="text-brand">{t.access.titleHl}</span></h2>
             <ol className="mt-8 space-y-6">
@@ -115,7 +114,7 @@ export default async function Home() {
             <p className="mt-3 max-w-md text-white/80">{t.cta.text}</p>
             <div className="mt-7"><Link href={login} className="btn bg-white !text-brand hover:bg-slate-100">{t.cta.button}</Link></div>
           </div>
-          <Image src="/images/mobile-pay.jpg" alt="" width={420} height={280} className="relative hidden h-52 w-full rounded-2xl object-cover ring-4 ring-white/20 md:block" />
+          <PaymentScene tone="dark" className="relative hidden h-52 w-full md:block" />
         </div>
       </section>
 

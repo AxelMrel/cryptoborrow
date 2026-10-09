@@ -10,7 +10,7 @@ export async function generateMetadata() {
 export default async function LoginPage() {
   const t = (await getDictionary()).auth.login;
   return (
-    <AuthShell title={t.title} subtitle={t.subtitle} photo="/images/woman-portrait.jpg" quote={t.quote}>
+    <AuthShell title={t.title} subtitle={t.subtitle} scene="market" quote={t.quote}>
       <ActionForm action={signIn} className="space-y-4">
         <div>
           <label className="label" htmlFor="email">{t.email}</label>

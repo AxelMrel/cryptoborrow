@@ -1,16 +1,17 @@
-import Image from "next/image";
+import { SCENES, type SceneName } from "@/components/illustrations/Scenes";
 import type { ReactNode } from "react";
 import { fmt } from "@/i18n/format";
 import { getDictionary } from "@/i18n/server";
 
 /** Bandeau d'accueil humain en haut des dashboards admin et super admin. */
-export default async function Welcome({ name, subtitle, photo = "/images/mobile-pay.jpg", children }: {
+export default async function Welcome({ name, subtitle, scene = "wallet", children }: {
   name: string;
   subtitle: string;
-  photo?: string;
+  scene?: SceneName;
   children?: ReactNode;
 }) {
   const t = (await getDictionary()).dash.welcome;
+  const Scene = SCENES[scene];
   const first = name.split(/\s+/)[0];
   return (
     <section className="relative overflow-hidden rounded-3xl bg-brand text-white shadow-[0_20px_50px_rgba(53,99,233,0.25)]">
@@ -23,10 +24,7 @@ export default async function Welcome({ name, subtitle, photo = "/images/mobile-
           <p className="mt-2 max-w-lg text-sm text-white/80">{subtitle}</p>
           {children && <div className="mt-5">{children}</div>}
         </div>
-        <Image
-          src={photo} alt="" width={220} height={150} priority
-          className="hidden h-36 w-56 rounded-2xl object-cover shadow-lg ring-4 ring-white/20 md:block"
-        />
+        <Scene tone="dark" className="hidden h-36 w-52 md:block" />
       </div>
     </section>
   );

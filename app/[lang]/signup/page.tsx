@@ -12,7 +12,7 @@ export default async function SignupPage() {
   const [dict, locale] = await Promise.all([getDictionary(), getLocale()]);
   const t = dict.auth.signup;
   return (
-    <AuthShell title={t.title} subtitle={t.subtitle} photo="/images/partners.jpg" quote={t.quote} homeHref="/admin">
+    <AuthShell title={t.title} subtitle={t.subtitle} scene="payment" quote={t.quote} homeHref="/admin">
       <SignupForm />
       <p className="mt-6 text-center text-sm text-slate-500">
         {t.haveAccount} <Link href={withLocale(locale, "/login")} className="font-medium text-brand hover:underline">{t.signIn}</Link>

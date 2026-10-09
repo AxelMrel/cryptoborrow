@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import SiteNav from "@/components/site/SiteNav";
 import SiteFooter from "@/components/site/SiteFooter";
 import FeeCards from "@/components/site/FeeCards";
+import { DashboardScene, WalletScene } from "@/components/illustrations/Scenes";
 import { ChartIcon, CoinsIcon, IconBadge, KeyIcon, SendIcon, UsersIcon } from "@/components/Icons";
 import { withLocale } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/server";
@@ -48,10 +48,9 @@ export default async function AdminLanding() {
 
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
             <div className="absolute -inset-4 rounded-[2.5rem] bg-brand/10" />
-            <Image
-              src="/images/partners.jpg" alt={t.heroAlt} width={640} height={520} priority
-              className="relative h-[420px] w-full rounded-[2rem] object-cover shadow-[0_24px_60px_rgba(18,22,58,0.18)] sm:h-[480px]"
-            />
+            <div className="relative flex h-[400px] items-center justify-center rounded-[2rem] bg-gradient-to-br from-brand/10 via-white to-brand/5 shadow-[0_24px_60px_rgba(18,22,58,0.10)] ring-1 ring-brand/10 sm:h-[480px]">
+              <DashboardScene className="h-auto max-h-full w-full p-3" />
+            </div>
             <div className="animate-float absolute -bottom-8 -left-2 w-72 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_18px_44px_rgba(18,22,58,0.14)] sm:-left-8">
               <p className="text-xs font-semibold text-brand">{t.sample.title}</p>
               <p className="mt-2 text-xs leading-relaxed text-slate-600">
@@ -111,7 +110,7 @@ export default async function AdminLanding() {
               <Link href={login} className="btn border border-white/50 text-white hover:bg-white/10">{t.cta.signIn}</Link>
             </div>
           </div>
-          <Image src="/images/man-smile.jpg" alt="" width={420} height={280} className="relative hidden h-52 w-full rounded-2xl object-cover object-top ring-4 ring-white/20 md:block" />
+          <WalletScene tone="dark" className="relative hidden h-52 w-full md:block" />
         </div>
       </section>
 

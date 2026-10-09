@@ -1,21 +1,22 @@
-import Image from "next/image";
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { SCENES, type SceneName } from "@/components/illustrations/Scenes";
 import { withLocale } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/server";
 import type { ReactNode } from "react";
 
-/** Mise en page des pages connexion / inscription : formulaire à gauche, photo humaine à droite. */
-export default async function AuthShell({ title, subtitle, photo, quote, homeHref = "/", children }: {
+/** Mise en page des pages connexion / inscription : formulaire à gauche, illustration crypto à droite. */
+export default async function AuthShell({ title, subtitle, scene, quote, homeHref = "/", children }: {
   title: string;
   subtitle: string;
-  photo: string;
+  scene: SceneName;
   quote: string;
   homeHref?: string;
   children: ReactNode;
 }) {
   const [t, locale] = await Promise.all([getDictionary(), getLocale()]);
+  const Scene = SCENES[scene];
   return (
     <main className="grid min-h-screen lg:grid-cols-2">
       <section className="flex flex-col justify-center px-6 py-10 sm:px-12">
@@ -29,9 +30,9 @@ export default async function AuthShell({ title, subtitle, photo, quote, homeHre
           {children}
         </div>
       </section>
-      <aside className="relative hidden lg:block">
-        <Image src={photo} alt="" fill sizes="50vw" priority className="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand/80 via-brand/10 to-transparent" />
+      <aside className="relative hidden flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-brand to-brand-dark px-10 pb-36 pt-16 lg:flex">
+        <div className="dots-bg pointer-events-none absolute inset-0 opacity-20" />
+        <Scene tone="dark" className="relative w-full max-w-lg" />
         <p className="absolute bottom-10 left-10 right-10 text-2xl font-semibold leading-snug text-white">{quote}</p>
       </aside>
     </main>

@@ -45,7 +45,7 @@ export default async function AdminDashboard() {
 
   return (
     <>
-      <Welcome name={me.full_name} photo="/images/partners.jpg" subtitle={t.welcome} />
+      <Welcome name={me.full_name} scene="dashboard" subtitle={t.welcome} />
       <div className="-mx-4 overflow-hidden border-y border-slate-200 bg-white"><LiveTicker /></div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Stat label={t.stats.clients} value={active.length} hint={pendingCount ? fmt(t.stats.pending, { n: pendingCount }) : undefined} />
