@@ -50,7 +50,7 @@ export default async function SuperAdminDashboard() {
     <>
       <Welcome name={me.full_name} photo="/images/man-smile.jpg" subtitle="Vue d'ensemble de la plateforme : admins, clients, crédits, codes et transactions." />
       <div className="-mx-4 overflow-hidden border-y border-slate-200 bg-white"><LiveTicker /></div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Admins" value={num(admins.length)} />
         <Stat label="Clients" value={num(clients.length)} />
         <Stat label="Soldes clients" value={fcfa(clients.reduce((s, c) => s + c.balance, 0))} />
@@ -61,12 +61,12 @@ export default async function SuperAdminDashboard() {
         <Stat label="Clients / admin" value={admins.length ? (clients.length / admins.length).toFixed(1) : "0"} hint="Moyenne" />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card title="Flux des clients (14 jours)" className="lg:col-span-2"><FlowBars data={dailyFlows(txs)} /></Card>
         <Card title="Répartition des transactions"><Donut data={typeBreakdown(txs)} /></Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card title="Crédits par admin">
           <RankBars data={admins.map((a) => ({ name: a.full_name, value: a.credits }))} empty="Aucun admin inscrit pour le moment." />
         </Card>
@@ -95,7 +95,7 @@ export default async function SuperAdminDashboard() {
       </Card>
 
       <Card title="Tarifs et paramètres">
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {settings.map((s) => (
             <SettingForm key={s.key} k={s.key} label={SETTING_LABELS[s.key] ?? s.key} value={s.value} />
           ))}

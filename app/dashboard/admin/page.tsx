@@ -51,13 +51,13 @@ export default async function AdminDashboard() {
     <>
       <Welcome name={me.full_name} photo="/images/partners.jpg" subtitle="Gérez vos clients, créditez leurs comptes et générez leurs codes de retrait." />
       <div className="-mx-4 overflow-hidden border-y border-slate-200 bg-white"><LiveTicker /></div>
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Stat label="Crédits" value={fcfa(me.credits)} hint={`Un code de retrait coûte ${fcfa(fee)}`} />
         <Stat label="Clients / quota" value={`${clients.length} / ${me.max_clients}`} hint={quotaFull ? "Quota atteint" : "Places restantes : " + (me.max_clients - clients.length)} />
         <Stat label="Codes générés" value={codes.length} hint={`${codes.filter((c) => codeStatus(c) === "active").length} actif(s)`} />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card title="Flux de mes clients (14 jours)" className="lg:col-span-2"><FlowBars data={dailyFlows(txs)} /></Card>
         <Card title="Répartition des opérations"><Donut data={typeBreakdown(txs)} /></Card>
       </div>

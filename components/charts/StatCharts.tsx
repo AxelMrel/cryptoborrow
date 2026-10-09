@@ -18,7 +18,7 @@ function Empty({ text }: { text: string }) {
 export function TrendArea({ data, unit = "FCFA", empty = "Pas encore de données." }: { data: { label: string; value: number }[]; unit?: string; empty?: string }) {
   if (data.length < 2) return <div className="h-64"><Empty text={empty} /></div>;
   return (
-    <div className="h-64 w-full">
+    <div className="h-64 w-full min-w-0">
       <ResponsiveContainer>
         <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <defs>
@@ -44,7 +44,7 @@ export function FlowBars({ data }: { data: { label: string; entrees: number; sor
     return <div className="h-64"><Empty text="Aucun flux sur les 14 derniers jours." /></div>;
   }
   return (
-    <div className="h-64 w-full">
+    <div className="h-64 w-full min-w-0">
       <ResponsiveContainer>
         <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <CartesianGrid stroke="#eef1f7" vertical={false} />
@@ -83,7 +83,7 @@ export function RankBars({ data, unit = "FCFA", empty = "Aucune donnée." }: { d
 export function Donut({ data, empty = "Aucune transaction." }: { data: { name: string; value: number; color: string }[]; empty?: string }) {
   if (data.length === 0) return <div className="h-64"><Empty text={empty} /></div>;
   return (
-    <div className="h-64 w-full">
+    <div className="h-64 w-full min-w-0">
       <ResponsiveContainer>
         <PieChart>
           <Pie data={data} dataKey="value" nameKey="name" innerRadius="55%" outerRadius="80%" paddingAngle={3} stroke="none">

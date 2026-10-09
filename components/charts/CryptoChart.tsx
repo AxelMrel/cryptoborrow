@@ -86,7 +86,7 @@ export default function CryptoChart({ xofPerUsd }: { xofPerUsd?: number | null }
         </p>
       )}
       {error && <p className="mb-2 text-sm text-down">{error}</p>}
-      <div ref={box} className="h-72 w-full" />
+      <div className="relative h-72 w-full min-w-0 overflow-hidden"><div ref={box} className="absolute inset-0" /></div>
     </div>
   );
 }

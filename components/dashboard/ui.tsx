@@ -4,7 +4,7 @@ import type { Transaction } from "@/lib/types";
 
 export function Card({ title, children, className = "" }: { title?: string; children: ReactNode; className?: string }) {
   return (
-    <section className={`card p-5 ${className}`}>
+    <section className={`card min-w-0 p-5 ${className}`}>
       {title && <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-500">{title}</h2>}
       {children}
     </section>

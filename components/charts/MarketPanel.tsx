@@ -10,7 +10,7 @@ export default function MarketPanel() {
   const [tab, setTab] = useState<"crypto" | "fx">("crypto");
   const { xofPer, xofPerUsd, date } = useFxRates();
   return (
-    <div className="card p-5">
+    <div className="card min-w-0 p-5">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex gap-1 rounded-xl bg-slate-100 p-1">
           {(["crypto", "fx"] as const).map((t) => (
