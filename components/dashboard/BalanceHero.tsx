@@ -1,4 +1,5 @@
 import { fcfa } from "@/lib/format";
+import DepositButton from "./DepositModal";
 
 /** Bloc principal du dashboard client : le solde du portefeuille est l'information centrale. */
 export default function BalanceHero({ name, balance, received, withdrawn }: {
@@ -19,7 +20,7 @@ export default function BalanceHero({ name, balance, received, withdrawn }: {
         <p className="mt-2 break-words text-4xl font-bold leading-tight sm:text-6xl">{fcfa(balance)}</p>
 
         <div className="mt-7 flex flex-wrap gap-3">
-          <a href="#depot" className="btn bg-white !px-6 !py-3 !text-brand hover:bg-slate-100">Déposer</a>
+          <DepositButton className="btn bg-white !px-6 !py-3 !text-brand hover:bg-slate-100">Déposer</DepositButton>
           <a href="#retrait" className="btn border border-white/50 !px-6 !py-3 text-white hover:bg-white/10">Retirer</a>
         </div>
 

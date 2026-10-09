@@ -4,7 +4,7 @@ import { balanceSeries, typeBreakdown } from "@/lib/stats";
 import type { Transaction } from "@/lib/types";
 import { Card, TransactionsTable } from "@/components/dashboard/ui";
 import BalanceHero from "@/components/dashboard/BalanceHero";
-import { DepositForm, WithdrawFlow } from "@/components/dashboard/client-forms";
+import { WithdrawFlow } from "@/components/dashboard/client-forms";
 import MarketPanel from "@/components/charts/MarketPanel";
 import { LiveTicker } from "@/components/charts/LiveTicker";
 import { Donut, TrendArea } from "@/components/charts/StatCharts";
@@ -37,7 +37,6 @@ export default async function ClientDashboard() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6">
-          <div id="depot" className="scroll-mt-24"><Card title="Dépôt"><DepositForm /></Card></div>
           <div id="retrait" className="scroll-mt-24"><Card title="Retrait"><WithdrawFlow /></Card></div>
         </div>
         <div className="lg:col-span-2"><MarketPanel /></div>

@@ -40,7 +40,7 @@ export default function Home() {
               Votre portefeuille crypto, <span className="text-brand">en FCFA</span>
             </h1>
             <p className="animate-fade-up mt-5 max-w-lg text-lg leading-relaxed text-slate-500 [animation-delay:200ms]">
-              Déposez, suivez les marchés en direct et retirez en toute sécurité. Votre admin crée votre compte et vous remet vos accès.
+              Suivez votre solde, les marchés en direct et retirez en toute sécurité. Votre admin crée votre compte et vous remet vos accès.
             </p>
             <div className="animate-fade-up mt-8 flex flex-col gap-3 [animation-delay:300ms] sm:flex-row">
               <Link href="/login" className="btn btn-primary !px-7 !py-3 text-base">Me connecter</Link>

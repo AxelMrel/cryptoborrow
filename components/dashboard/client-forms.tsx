@@ -1,21 +1,9 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { deposit, withdraw } from "@/lib/actions/client";
+import { withdraw } from "@/lib/actions/client";
 import type { ActionState } from "@/lib/types";
-import { ActionForm, Feedback, SubmitButton } from "./forms";
-
-export function DepositForm() {
-  return (
-    <ActionForm action={deposit} className="space-y-3">
-      <div>
-        <label className="label" htmlFor="dep-amount">Montant (FCFA)</label>
-        <input id="dep-amount" name="amount" inputMode="numeric" required className="input" placeholder="ex. 50000" />
-      </div>
-      <SubmitButton className="btn btn-primary w-full">Déposer</SubmitButton>
-    </ActionForm>
-  );
-}
+import { Feedback, SubmitButton } from "./forms";
 
 /** Retrait en deux temps : montant -> message "contactez votre admin" -> saisie du code. */
 export function WithdrawFlow() {

@@ -20,7 +20,7 @@ cp .env.example .env.local        # puis renseigner les 3 clés Supabase
 4. Créer le super admin de départ : `npm run seed:super-admin`
 5. `npm run dev` → <http://localhost:3000> → *Connexion*.
 
-Parcours de démonstration : un futur admin choisit un pack sur la landing (`/signup`) et reçoit ses crédits + son quota automatiquement → l'admin crée un client et le crédite → le client fait un dépôt → l'admin génère un code (5 000 crédits) → le client retire avec ce code.
+Parcours de démonstration : un futur admin choisit un pack sur la landing (`/signup`) et reçoit ses crédits + son quota automatiquement → l'admin crée un client et le crédite (le client qui veut déposer est invité, par une fenêtre modale, à contacter son admin) → l'admin génère un code (5 000 crédits) → le client retire avec ce code.
 
 ## 2. Architecture
 

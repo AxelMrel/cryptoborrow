@@ -6,18 +6,6 @@ import { callRpc, done, errorMessage, fail, guard } from "@/lib/rpc";
 import { parseAmount } from "@/lib/validation";
 import { fcfa } from "@/lib/format";
 
-export async function deposit(_prev: ActionState, formData: FormData): Promise<ActionState> {
-  const me = await guard("client");
-  if (!me) return fail(errorMessage("FORBIDDEN"));
-  const amount = parseAmount(formData.get("amount"));
-  if (!amount) return fail(errorMessage("INVALID_AMOUNT"));
-
-  const r = await callRpc("rpc_client_deposit", { p_client: me.id, p_amount: amount });
-  if (!r.ok) return fail(errorMessage(r.error));
-  revalidatePath("/dashboard/client");
-  return done(`Dépôt de ${fcfa(amount)} effectué.`);
-}
-
 export async function withdraw(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const me = await guard("client");
   if (!me) return fail(errorMessage("FORBIDDEN"));
