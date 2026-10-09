@@ -9,6 +9,19 @@ export type Profile = {
   balance: number;
   credits: number;
   max_clients: number;
+  phone?: string | null;
+  created_at: string;
+};
+
+export type PaymentMethod = {
+  id: string;
+  user_id: string;
+  kind: "card" | "bank";
+  label: string;
+  holder: string;
+  last4: string;
+  expiry: string | null;
+  is_default: boolean;
   created_at: string;
 };
 

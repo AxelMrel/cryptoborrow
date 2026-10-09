@@ -17,6 +17,8 @@ const MESSAGES: Record<string, string> = {
   CODE_EXPIRED: "Ce code a expiré. Demandez-en un nouveau à votre admin.",
   CODE_AMOUNT_MISMATCH: "Le montant ne correspond pas à celui prévu par ce code.",
   INSUFFICIENT_BALANCE: "Solde insuffisant.",
+  INVALID_INPUT: "Informations invalides, vérifiez les champs.",
+  LIMIT_REACHED: "Vous avez atteint la limite de 5 moyens de paiement. Supprimez-en un pour en ajouter un autre.",
   PLAN_NOT_FOUND: "Ce pack n'existe plus ou n'est plus disponible.",
 };
 

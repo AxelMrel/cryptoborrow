@@ -16,6 +16,7 @@ cp .env.example .env.local        # puis renseigner les 3 clés Supabase
 
 1. Créer un projet sur [supabase.com](https://supabase.com).
 2. **SQL Editor** → coller et exécuter [`supabase/schema.sql`](supabase/schema.sql) (tables, RLS, fonctions RPC, tarifs).
+   puis [`supabase/002_profile_payment.sql`](supabase/002_profile_payment.sql) (téléphone du profil et moyens de paiement du client).
 3. Renseigner `.env.local` (Project Settings → API) ; définir aussi `SEED_SUPER_ADMIN_*`.
 4. Créer le super admin de départ : `npm run seed:super-admin`
 5. `npm run dev` → <http://localhost:3000> → *Connexion*.
@@ -29,6 +30,8 @@ proxy.ts                     Protège /dashboard/* et /login (Next 16 : "middlew
 app/
   page.tsx                   Landing CLIENT (accueil) : aucun lien vers l'espace admin
   admin/page.tsx             Landing ADMIN, adresse communiquée aux admins (outils, packs, inscription)
+  dashboard/client/profile/          Profil du client (nom, téléphone, mot de passe)
+  dashboard/client/payment-methods/  Moyens de paiement du client (4 derniers chiffres uniquement)
   signup/page.tsx            Inscription d'un admin par achat d'un pack
   login/page.tsx             Connexion email + mot de passe
   dashboard/
