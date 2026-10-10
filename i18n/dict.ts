@@ -25,5 +25,5 @@ const build = (l: Locale) => ({
   superAdmin: superAdmin[l],
 });
 
-export const dictionaries = { fr: build("fr"), en: build("en") };
+export const dictionaries = { fr: build("fr"), en: build("en"), it: build("it") };
 export type Dict = ReturnType<typeof build>;

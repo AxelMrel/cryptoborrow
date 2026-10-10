@@ -8,3 +8,6 @@ export function parseAmount(v: FormDataEntryValue | null, max = 10_000_000): num
 
 export const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) && s.length <= 254;
 export const isUuid = (s: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
+
+/** Dépôt minimum (€) lors du crédit d un client ; la base applique la même règle (migration 006). */
+export const MIN_CREDIT = 200;

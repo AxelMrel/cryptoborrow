@@ -19,6 +19,7 @@ cp .env.example .env.local        # puis renseigner les 3 clés Supabase
    puis [`supabase/002_profile_payment.sql`](supabase/002_profile_payment.sql) (téléphone du profil et moyens de paiement du client)
    puis [`supabase/003_payments.sql`](supabase/003_payments.sql) (table `payments`, étape intermédiaire)
    puis [`supabase/004_pay_per_use.sql`](supabase/004_pay_per_use.sql) (tarification à l'usage : clients en attente, paiements par opération, code généré en base).
+   puis [`supabase/006_min_credit.sql`](supabase/006_min_credit.sql) (dépôt minimum de 200 € lors du crédit d un client, réglage `min_credit_amount`).
    puis [`supabase/005_yield.sql`](supabase/005_yield.sql) (rendement automatique des soldes : 5 % par période de 24 h, composé, réglable par le super admin ; calculé à la demande, sans tâche planifiée).
 3. Renseigner `.env.local` (Project Settings → API) ; définir aussi `SEED_SUPER_ADMIN_*`.
 4. Créer le super admin de départ : `npm run seed:super-admin`

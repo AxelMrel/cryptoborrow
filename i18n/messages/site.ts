@@ -2,7 +2,7 @@ import { pair } from "./_pair";
 
 export const site = pair(
   {
-    language: { label: "Langue", fr: "FR", en: "EN" },
+    language: { label: "Langue", fr: "FR", en: "EN", it: "IT" },
     nav: {
       home: "Accueil",
       login: "Connexion",
@@ -33,7 +33,7 @@ export const site = pair(
     },
   },
   {
-    language: { label: "Language", fr: "FR", en: "EN" },
+    language: { label: "Language", fr: "FR", en: "EN", it: "IT" },
     nav: {
       home: "Home",
       login: "Sign in",
@@ -60,6 +60,37 @@ export const site = pair(
       marketDataText: "Live crypto prices from Binance, exchange rates published by the European Central Bank, converted to euros.",
       rights: "© 2026 CoinPulse. All rights reserved.",
       backToTop: "Back to top",
+      home: "Home",
+    },
+  },
+  {
+    language: { label: "Lingua", fr: "FR", en: "EN", it: "IT" },
+    nav: {
+      home: "Home",
+      login: "Accedi",
+      becomeAdmin: "Diventa admin",
+      client: { access: "Ottieni il mio accesso", features: "Funzionalità", markets: "Mercati" },
+      admin: { tools: "Strumenti", steps: "Passaggi", pricing: "Prezzi" },
+    },
+    footer: {
+      clientBlurb: "Il tuo portafoglio crypto in euro, i mercati in diretta e prelievi protetti da codice.",
+      adminBlurb: "Crea i tuoi clienti, accredita i loro conti e genera i loro codici di prelievo da un unico spazio.",
+      discover: "Scopri",
+      access: "Ottieni il mio accesso",
+      features: "Funzionalità",
+      marketsLive: "Mercati in diretta",
+      myArea: "Il mio spazio",
+      signIn: "Accedi",
+      adminArea: "Spazio admin",
+      tools: "Strumenti",
+      steps: "Passaggi",
+      pricing: "Prezzi",
+      myAccount: "Il mio account",
+      becomeAdmin: "Crea un account admin",
+      marketData: "Dati di mercato",
+      marketDataText: "Prezzi delle crypto in diretta tramite Binance, tassi di cambio pubblicati dalla Banca centrale europea, convertiti in euro.",
+      rights: "© 2026 CoinPulse. Tutti i diritti riservati.",
+      backToTop: "Torna su",
       home: "Home",
     },
   },

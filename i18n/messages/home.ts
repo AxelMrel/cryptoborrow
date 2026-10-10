@@ -95,4 +95,51 @@ export const home = pair(
       button: "Sign in",
     },
   },
+  {
+    meta: {
+      title: "CoinPulse | Il tuo portafoglio crypto in euro",
+      description: "Il tuo portafoglio in euro, i mercati in diretta e prelievi protetti da codice.",
+    },
+    pill: "Spazio cliente",
+    heroTitle: "Il tuo portafoglio crypto, ",
+    heroTitleHl: "in euro",
+    heroText: "Segui il tuo saldo, i mercati in diretta e preleva in totale sicurezza. Il tuo admin crea il tuo account e ti consegna gli accessi.",
+    signIn: "Accedi",
+    howToAccess: "Come ottenere il mio accesso",
+    heroAlt: "Una cliente sorridente",
+    balanceLabel: "Saldo disponibile",
+    todayGain: "▲ +{amount} oggi",
+    access: {
+      title: "Ottieni il tuo accesso ",
+      titleHl: "in 3 passaggi",
+      alt: "Un'utente",
+      steps: [
+        { title: "Contatta il tuo admin", text: "È lui ad aprire il tuo account cliente. Per i clienti non c'è registrazione online." },
+        { title: "Ricevi le tue credenziali", text: "Il tuo admin ti invia il tuo indirizzo e-mail e la tua password tramite WhatsApp o e-mail." },
+        { title: "Accedi", text: "Inserisci queste credenziali nella pagina di accesso e raggiungi la tua dashboard." },
+      ],
+      already: "Hai già ricevuto le tue credenziali?",
+      signInHere: "Accedi qui",
+    },
+    features: {
+      title: "Cosa trovi ",
+      titleHl: "nel tuo spazio",
+      items: [
+        { title: "Un portafoglio in euro", text: "Il tuo saldo, i tuoi depositi e i tuoi prelievi, con una curva di andamento e uno storico chiaro." },
+        { title: "Mercati in tempo reale", text: "Prezzi delle crypto e tassi di cambio nel tuo spazio, con grafici dettagliati." },
+        { title: "Prelievi con codice", text: "Per prelevare, chiedi un codice al tuo admin. È monouso e limitato nel tempo." },
+        { title: "I tuoi dati, solo i tuoi", text: "Vedi soltanto il tuo account. La separazione è garantita dal database." },
+      ],
+    },
+    markets: {
+      title: "I mercati ",
+      titleHl: "in diretta",
+      subtitle: "Prezzi in dollari ed equivalente in euro, aggiornati di continuo.",
+    },
+    cta: {
+      title: "I tuoi accessi sono pronti?",
+      text: "Accedi con l'e-mail e la password che il tuo admin ti ha inviato.",
+      button: "Accedi",
+    },
+  },
 );

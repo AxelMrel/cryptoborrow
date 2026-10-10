@@ -23,4 +23,15 @@ export const market = pair(
     tabs: { crypto: "Crypto", fx: "Currencies" },
     ecbRates: "ECB rates of {date}",
   },
+  {
+    feedLive: "Flusso Binance in diretta",
+    feedConnecting: "Connessione al flusso…",
+    tickerLabel: "Prezzi in diretta",
+    live: "diretta",
+    over24h: "su 24 h",
+    cryptoError: "Dati di mercato non disponibili (Binance non raggiungibile).",
+    fxError: "Tassi di cambio non disponibili.",
+    tabs: { crypto: "Crypto", fx: "Valute" },
+    ecbRates: "Tassi BCE del {date}",
+  },
 );
