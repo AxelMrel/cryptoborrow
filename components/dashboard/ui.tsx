@@ -71,7 +71,7 @@ export async function TransactionsTable({
   const [dict, locale] = await Promise.all([getDictionary(), getLocale()]);
   const t = dict.dash;
   const positive = (x: Transaction) =>
-    viewerId ? x.to_user === viewerId : x.type === "deposit" || x.type === "client_credit" || x.type === "admin_credit";
+    viewerId ? x.to_user === viewerId : x.type === "deposit" || x.type === "client_credit" || x.type === "admin_credit" || x.type === "yield";
   const subject = (x: Transaction) => (viewerId ? null : names[x.to_user ?? x.from_user ?? ""] ?? null);
   return (
     <Table head={[t.table.date, t.table.type, t.table.amount]} empty={t.table.empty} minWidth="min-w-0">

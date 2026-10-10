@@ -5,7 +5,7 @@ import type { ActionState } from "@/lib/types";
 import { callRpc, done, errorMessage, fail, guard, refreshDashboard } from "@/lib/rpc";
 import { getActionContext } from "@/i18n/server";
 
-const SETTING_KEYS = ["client_creation_fee_xof", "withdrawal_code_fee_xof", "withdrawal_code_ttl_minutes", "max_operation_amount"];
+const SETTING_KEYS = ["client_creation_fee_xof", "withdrawal_code_fee_xof", "withdrawal_code_ttl_minutes", "max_operation_amount", "yield_rate_percent", "yield_period_minutes"];
 
 export async function updateSetting(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const { m, e } = await getActionContext();

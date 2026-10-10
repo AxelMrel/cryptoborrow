@@ -4,7 +4,7 @@ import { pair } from "./_pair";
 export const client = pair(
   {
     meta: { wallet: "Mon portefeuille | CoinPulse", profile: "Mon profil | CoinPulse", payments: "Moyens de paiement | CoinPulse" },
-    balance: { label: "Solde disponible", hide: "Masquer le solde", show: "Afficher le solde", deposit: "Déposer", withdraw: "Retirer" },
+    balance: { label: "Solde disponible", hide: "Masquer le solde", show: "Afficher le solde", deposit: "Déposer", withdraw: "Retirer", nextYield: "Prochain rendement de {rate} % dans {time}" },
     depositModal: {
       title: "Contactez votre admin",
       text: "Pour déposer de l'argent sur votre portefeuille, contactez votre admin. Il créditera votre compte et le solde sera mis à jour dans votre espace.",
@@ -70,7 +70,7 @@ export const client = pair(
   },
   {
     meta: { wallet: "My wallet | CoinPulse", profile: "My profile | CoinPulse", payments: "Payment methods | CoinPulse" },
-    balance: { label: "Available balance", hide: "Hide balance", show: "Show balance", deposit: "Deposit", withdraw: "Withdraw" },
+    balance: { label: "Available balance", hide: "Hide balance", show: "Show balance", deposit: "Deposit", withdraw: "Withdraw", nextYield: "Next {rate}% yield in {time}" },
     depositModal: {
       title: "Contact your admin",
       text: "To deposit money into your wallet, contact your admin. They will credit your account and the balance will be updated in your area.",

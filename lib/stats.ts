@@ -26,7 +26,7 @@ export function dailyFlows(txs: Transaction[], days = 14, now = new Date()) {
   for (const t of txs) {
     const row = rows.find((r) => r.key === t.created_at.slice(0, 10));
     if (!row) continue;
-    if (t.type === "deposit" || t.type === "client_credit") row.entrees += t.amount;
+    if (t.type === "deposit" || t.type === "client_credit" || t.type === "yield") row.entrees += t.amount;
     else if (t.type === "withdrawal") row.sorties += t.amount;
   }
   return rows;
@@ -38,6 +38,7 @@ const TYPE_COLOR: Record<TxType, string> = {
   withdrawal: "#e5484d",
   admin_credit: "#8b5cf6",
   admin_fee: "#f59e0b",
+  yield: "#06b6d4",
 };
 
 /** Répartition des transactions par type (nombre). `labels` : libellés traduits par type. */

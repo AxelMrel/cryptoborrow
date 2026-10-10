@@ -2,6 +2,17 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+/** Rendement des soldes (réglages du super admin). Même étiquette de cache que les tarifs. */
+export async function getYieldConfig() {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag("fees");
+  const { data } = await createAdminClient()
+    .from("settings").select("key,value").in("key", ["yield_rate_percent", "yield_period_minutes"]);
+  const v = Object.fromEntries((data ?? []).map((r) => [r.key, Number(r.value)]));
+  return { ratePercent: v.yield_rate_percent ?? 0, periodMinutes: v.yield_period_minutes ?? 0 };
+}
+
 export const DEFAULT_FEES = { clientCreation: 5000, withdrawalCode: 1000 }; // francs CFA (XOF)
 
 /**

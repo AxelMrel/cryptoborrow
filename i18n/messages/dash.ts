@@ -19,6 +19,7 @@ export const dash = pair(
       client_credit: "Crédit client",
       admin_credit: "Crédits admin",
       admin_fee: "Frais code retrait",
+      yield: "Rendement",
     },
     status: { active: "Actif", used: "Utilisé", expired: "Expiré" },
     charts: {
@@ -49,6 +50,7 @@ export const dash = pair(
       client_credit: "Client credit",
       admin_credit: "Admin credits",
       admin_fee: "Withdrawal code fee",
+      yield: "Yield",
     },
     status: { active: "Active", used: "Used", expired: "Expired" },
     charts: {

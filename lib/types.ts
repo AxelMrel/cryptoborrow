@@ -11,6 +11,7 @@ export type Profile = {
   max_clients: number;
   phone?: string | null;
   status: "active" | "pending";
+  yield_at?: string | null;
   created_at: string;
 };
 
@@ -26,7 +27,7 @@ export type PaymentMethod = {
   created_at: string;
 };
 
-export type TxType = "deposit" | "withdrawal" | "client_credit" | "admin_credit" | "admin_fee";
+export type TxType = "deposit" | "withdrawal" | "client_credit" | "admin_credit" | "admin_fee" | "yield";
 
 export type Transaction = {
   id: string;
